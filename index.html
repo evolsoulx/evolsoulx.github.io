@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hammercrest Build</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> 
+
+	<script type="text/javascript" src="pako.js"></script>
+	<script type="text/javascript" src="yaml.js"></script>
+	<script type="text/javascript" src="lists.js"></script>
+	<script>
+		compressed = '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';
+		var stringData;
+		var playerJSON;
+		var prettyPlayerJSON;
+		function deCompressSave(b64Data) 
+		{
+				var strData = atob(b64Data);
+				var charData = strData.split('').map(function (x) { return x.charCodeAt(0); });
+				var binData = new Uint8Array(charData);
+				var data = pako.inflate(binData);
+				var strData = String.fromCharCode.apply(null, new Uint16Array(data));
+				stringData = strData;
+				nativeObject = YAML.parse(strData);
+				playerJSON = nativeObject;
+				prettyPlayerJSON = JSON.stringify(playerJSON, null, 4);
+
+				// document.getElementById('outputDiv').innerHTML = prettyPlayerJSON;
+
+				displayGear();
+		}
+
+		function getItemById(itemId)
+		{
+			for (var i = 0; i < itemList.length; i++)
+			{
+  				if (itemList[i].Id == itemId)
+				{
+					return itemList[i]["Display name"];
+				}
+			}
+			return itemId;
+		}
+
+		function getItemStatName(statName)
+		{
+			for (var i = 0; i < statList.length; i++)
+			{
+  				if (itemList[i].Name.indexOf(statName) != -1)
+				{
+					return itemList[i]["Readable"];
+				}
+			}
+			return statName;
+		}
+
+
+		function displayGear()
+		{
+			console.log('test');
+			outputDivs='';
+			equipmentList = playerJSON.PlayerData.Equipment;
+				for(i=0;i<equipmentList.length;i++)
+				{
+					curEquip = equipmentList[i];
+					itemName = getItemById(curEquip.Id);
+					enhancements = curEquip.TotalEnhancements;
+					enchantment = curEquip.Enchant;
+					itemStats = curEquip.Stats;
+
+					outputDivs+="<div class='item "+curEquip.Rarity+"'>";
+						outputDivs+="<div class='itemL'>"+itemName+"</div><div class='itemR'>ilvl"+curEquip.ItemLevel+"</div><br/>";	
+						outputDivs+="<div class='itemStats'>";
+						if(enhancements){outputDivs+="<div class='enhancements'>Enhancements: "+enhancements+"</div>";}
+						if(itemStats)
+						{
+							for(j=0;j<itemStats.length;j++)
+							{
+								itemStatName = itemStats[j].Name;
+								itemStatValue= itemStats[j].CurrentValue;
+								outputDivs+="<div class='itemStat'>"+itemStatValue+"% "+itemStatName+"</div>"
+							}
+						}
+						if(enchantment){outputDivs+="<div class='enchantment'>Enchantment: +"+enchantment.CurrentValue+"% "+enchantment.Name+"</div>";}
+						outputDivs+="</div>";
+						// outputDivs+="Item Name: "+itemName+"<br/>";	
+						// outputDivs+="Item Rarity: "+curEquip.Rarity+"<br/>";	
+
+					outputDivs+="</div>";
+				}
+
+			document.getElementById('outputDiv').innerHTML = outputDivs;
+
+		}
+
+	</script>
+
+	<style>
+		body
+		{
+			background-color:#2F3844;
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		.item 
+		{
+			width: 400px;
+min-height: 20px;
+display: inline-block;
+background-color: #1B111C;
+color:#E6E6E6;
+margin: 4px;
+padding: 5px;
+		}
+
+		.itemL
+		{
+			display:inline-block;
+			float: left
+		}
+		.itemR
+		{
+			display:inline-block;
+			float: right;
+		}
+		.enhancements{color:#30A578;}
+		.enchantment{color:#742B9E;}
+		.itemStat{color:#416996;}
+		.itemStats{text-align:center;}
+		/*item rarities*/
+		.Legendary .itemL
+		{
+			color:#FF9700;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="inputDiv">
+		<br /><br />
+		<input type="text" id="saveString" value="" /><input type="button" value="Convert" onclick="deCompressSave(document.getElementById('saveString').value)">
+	</div>
+
+	<div id="outputDiv">
+
+	</div>
+
+</body>
+
+</html>
