@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Annoying Discord Spoilers</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
+	<script type="text/javascript" src="pako.js"></script>
+	<script type="text/javascript" src="yaml.js"></script>
+	<script type="text/javascript" src="lists.js"></script>
+	<script type="text/javascript" src="itemStatsList.js"></script>
+
+	<style>
+		body {
+			color: #ffffff;
+			background-color: #2F3844;
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		#inputDiv
+		{
+			margin-bottom:20px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="inputDiv">
+		<label for="inputText">Text to Convert</label><br/>
+
+		<textarea id="inputText" name="inputText" rows="4" cols="50">
+		</textarea> 				
+	</div>
+
+	<div id="outputDiv">
+				<label for="outputText">Copy and Paste me!</label><br/>
+
+		<textarea id="outputText" name="outputText" rows="4" cols="50"></textarea>
+	</div>
+
+	<script>
+		const re = /(.)/g;
+		document.getElementById('inputText').onkeyup = function()
+		{
+			document.getElementById('outputText').value = document.getElementById('inputText').value.replace(re,'||$1||');
+		}
+	</script>
+
+</body>
+
+</html>
