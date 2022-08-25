@@ -24,8 +24,6 @@
 
 
 <script>
-aresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIID</th><th scope='col'>EXECUTION</th><th scope='col'>TYPE</th><th scope='col'>SCHEDULEXML</th><th scope='col'>STATUS</th><th scope='col'>FROMNAME</th><th scope='col'>REPLYTOEMAIL</th><th scope='col'>QUEUEDBY</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th><th scope='col'>ISBEINGPROCESSEDBYEMAILSERVICE</th><th scope='col'>DONOTSNDTONOTINTERACTDCONTACTS</th><th scope='col'>NBROFRECENTCONSECUTIVEEMAILS</th><th scope='col'>NBROFMONTHS</th><th scope='col'>QUEUEDCOUNT</th><th scope='col'>SCHEDULETEXT</th><th scope='col'>STARTDATE</th><th scope='col'>ENDDATE</th></tr>";
-bresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIEMAILTASKID</th><th scope='col'>STARTTIME</th><th scope='col'>ENDTIME</th><th scope='col'>STATUS</th><th scope='col'>ABORTREQUESTED</th><th scope='col'>TOTALCONTACTS</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th></tr>";
 
 function prettyClient(a)
 {
@@ -39,9 +37,12 @@ function convertRowToString(a)
 }
 function gogo()
 {
+	aresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIID</th><th scope='col'>EXECUTION</th><th scope='col'>TYPE</th><th scope='col'>SCHEDULEXML</th><th scope='col'>STATUS</th><th scope='col'>FROMNAME</th><th scope='col'>REPLYTOEMAIL</th><th scope='col'>QUEUEDBY</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th><th scope='col'>ISBEINGPROCESSEDBYEMAILSERVICE</th><th scope='col'>DONOTSNDTONOTINTERACTDCONTACTS</th><th scope='col'>NBROFRECENTCONSECUTIVEEMAILS</th><th scope='col'>NBROFMONTHS</th><th scope='col'>QUEUEDCOUNT</th><th scope='col'>SCHEDULETEXT</th><th scope='col'>STARTDATE</th><th scope='col'>ENDDATE</th></tr>";
+bresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIEMAILTASKID</th><th scope='col'>STARTTIME</th><th scope='col'>ENDTIME</th><th scope='col'>STATUS</th><th scope='col'>ABORTREQUESTED</th><th scope='col'>TOTALCONTACTS</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th></tr>";
+
     document.getElementById('aresult').innerHTML = "";
 document.getElementById('bresult').innerHTML = "";
-
+document.getElementById('inputHTMLph').innerHTML="";
 document.getElementById('inputHTMLph').innerHTML = document.getElementById('inputText').value
 
 tableList = document.getElementsByTagName('table');
