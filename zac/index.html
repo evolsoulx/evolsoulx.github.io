@@ -6,15 +6,14 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Annoying Discord Spoilers</title>
+	<title>Zac</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 	<style>
 		body {
-			color: #ffffff;
-			background-color: #2F3844;
 			font-family: 'Open Sans', sans-serif;
+			font-size:10px;
 		}
 
 		#inputDiv
@@ -22,6 +21,79 @@
 			margin-bottom:20px;
 		}
 	</style>
+
+
+<script>
+aresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIID</th><th scope='col'>EXECUTION</th><th scope='col'>TYPE</th><th scope='col'>SCHEDULEXML</th><th scope='col'>STATUS</th><th scope='col'>FROMNAME</th><th scope='col'>REPLYTOEMAIL</th><th scope='col'>QUEUEDBY</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th><th scope='col'>ISBEINGPROCESSEDBYEMAILSERVICE</th><th scope='col'>DONOTSNDTONOTINTERACTDCONTACTS</th><th scope='col'>NBROFRECENTCONSECUTIVEEMAILS</th><th scope='col'>NBROFMONTHS</th><th scope='col'>QUEUEDCOUNT</th><th scope='col'>SCHEDULETEXT</th><th scope='col'>STARTDATE</th><th scope='col'>ENDDATE</th></tr>";
+bresults = "<table border='1' width='90%'><tr><th scope= 'col'>Client ID</th><th scope= 'col'>AY Serv</th><th scope='col'>ID</th><th scope='col'>CIEMAILTASKID</th><th scope='col'>STARTTIME</th><th scope='col'>ENDTIME</th><th scope='col'>STATUS</th><th scope='col'>ABORTREQUESTED</th><th scope='col'>TOTALCONTACTS</th><th scope='col'>LASTMODIF</th><th scope='col'>LASTMODIFIEDBY</th><th scope='col'>SOURCE</th></tr>";
+
+function prettyClient(a)
+{
+        cname = a[0].replace('"','').replace('"','');
+        cserv = a[1].replace('"','').replace('"','');
+        return [cname,cserv];
+}
+function convertRowToString(a)
+{
+
+}
+function gogo()
+{
+    document.getElementById('aresult').innerHTML = "";
+document.getElementById('bresult').innerHTML = "";
+
+document.getElementById('inputHTMLph').innerHTML = document.getElementById('inputText').value
+
+tableList = document.getElementsByTagName('table');
+
+for(i=0;i<tableList.length-2;i++)
+{
+    if(tableList[i].innerHTML.indexOf('SYS_CONTEXT') != -1)
+    {
+        ccn = tableList[i].getElementsByTagName('td')[0].innerHTML.split(',');
+        ccnPretty = prettyClient(ccn); 
+    }
+    if(tableList[i+1].innerHTML.indexOf('SCHEDULEXML') != -1) //SELECT * FROM CIEMAILTASKS WHERE isbeingprocessedbyemailservice = 1; 
+    {
+        ccrb = tableList[i+1].getElementsByTagName('tr');
+        for(j=1;j<ccrb.length;j++)
+        {
+            ccrbtd = ccrb[j].getElementsByTagName('td');
+            aresults+="<tr><td>"+ccnPretty[0]+"</td><td>"+ccnPretty[1]+"</td>";
+            for(k=0;k<ccrbtd.length;k++)
+            {
+                aresults+=ccrbtd[k].outerHTML;
+            }
+            aresults+="</tr>";
+        } 
+    }
+    if(tableList[i+2].innerHTML.indexOf('CIEMAILTASKID') != -1 && tableList[i+1].innerHTML.indexOf('SYS_CONTEXT') == -1)//SELECT * FROM CIEMAILTASKACTIVITIES WHERE STATUS = 1 OR ENDTIME IS NULL; 
+    {
+        ccrb = tableList[i+2].getElementsByTagName('tr');
+        for(j=1;j<ccrb.length;j++)
+        {
+            ccrbtd = ccrb[j].getElementsByTagName('td');
+            bresults+="<tr><td>"+ccnPretty[0]+"</td><td>"+ccnPretty[1]+"</td>";
+            for(k=0;k<ccrbtd.length;k++)
+            {
+                bresults+=ccrbtd[k].outerHTML;
+            }
+            bresults+="</tr>";
+        } 
+    }
+}
+
+
+aresults+="</table>";
+bresults+="</table>";
+document.getElementById('aresult').innerHTML = aresults;
+document.getElementById('bresult').innerHTML = bresults;
+
+
+}
+
+
+</script>
 </head>
 
 <body>
@@ -31,12 +103,17 @@
 
 		<textarea id="inputText" name="inputText" rows="4" cols="50"></textarea> 				
 	</div>
+	<input type="button" value="GOGOGOGOGOGO" onclick="gogo()"></input>
+<br/><br/>
+	<div id="inputHTMLph" style="display:none;"></div>
+	<b>SELECT * FROM CIEMAILTASKS WHERE isbeingprocessedbyemailservice = 1; </b><br/>
+	<div id="aresult"></div><br/>
+	<hr>
+	<b>SELECT * FROM CIEMAILTASKACTIVITIES WHERE STATUS = 1 OR ENDTIME IS NULL;  </b><br/>
 
-	<div id="outputDiva">
-	</div>
-	<div id="outputDivb">
-	</div>
-
+	<div id="bresult"></div>
+	
+	
 
 </body>
 
