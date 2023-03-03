@@ -14,7 +14,12 @@ window.onload = function(){
         displayOutput('OldExternalId,NewExternalId\n'+oldId+','+newId+'\n','OldExternalId,NewExternalId\n'+newId+',zzz_'+newId+'\n','usernameSwap_'+newId+'.csv')
     }
 }
-
+function updateUrlParams() {
+  var input1Value = document.getElementById("oldOne").value;
+  var input2Value = document.getElementById("newOne").value;
+  var newUrl = window.location.href.split('?')[0] + '?OldExternalId=' + input1Value + '&NewExternalId=' + input2Value;
+  window.location.href = newUrl;
+}
 function processFile() {
     console.log("Processing Started...")
     var fileInput = document.getElementById('fileInput');

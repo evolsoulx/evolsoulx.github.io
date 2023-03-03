@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family:Roboto, Arial, sans-serif;
 }
 
 .container {
@@ -56,7 +56,7 @@ table {
   table th,
   table td {
     border: none;
-    padding: 12px;
+    padding: 5px;
     text-align: left;
     font-size: 16px;
   }

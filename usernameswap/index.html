@@ -49,6 +49,12 @@
         <input type="file" id="fileInput">
         <button id="processButton" onclick="processFile()">Process File</button>
       </div>
+
+      <div> Or run a one off Username Swap<br/>
+       OldExternalId <input type="text" id="oldOne"/> to become NewExternalId <input type="text" id="newOne"/>
+       <button id="processOneOff" onclick="updateUrlParams()">Run One</button>
+
+      </div>
       <div class="output">
         <h2 class="subtitle">Output:</h2>
         <div id="outputContainer">
