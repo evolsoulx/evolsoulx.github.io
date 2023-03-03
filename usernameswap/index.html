@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Username Swap Converter</title>
+    <link rel="stylesheet" href="css.css">
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Username Swap Converter</h1>
+      <div>input a csv file in the format of:<br/>
+        <table cellspacing="0" border="1">
+          <colgroup width="93"></colgroup>
+          <colgroup width="98"></colgroup>
+          <tr>
+            <td height="17" align="left">OldExternalId</td>
+            <td align="left">NewExternalId</td>
+          </tr>
+          <tr>
+            <td height="17" align="left">olda1</td>
+            <td align="left">newa1</td>
+          </tr>
+          <tr>
+            <td height="17" align="left">oldb2</td>
+            <td align="left">newb2</td>
+          </tr>
+        </table>
+        <br/>
+         and get back: <br/>
+         <table cellspacing="0" border="1">
+          <colgroup width="93"></colgroup>
+          <colgroup width="98"></colgroup>
+          <tr>
+            <td height="17" align="left">OldExternalId</td>
+            <td align="left">NewExternalId</td>
+          </tr>
+          <tr>
+            <td height="17" align="left">newa1</td>
+            <td align="left">zzz_newa1</td>
+          </tr>
+          <tr>
+            <td height="17" align="left">newb2</td>
+            <td align="left">zzz_newb2</td>
+          </tr>
+        </table>
+        
+      </div>
+      <div class="input">
+        <input type="file" id="fileInput">
+        <button id="processButton" onclick="processFile()">Process File</button>
+      </div>
+      <div class="output">
+        <h2 class="subtitle">Output:</h2>
+        <div id="outputContainer">
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
