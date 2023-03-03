@@ -1,3 +1,20 @@
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
+  // Get OldExternalId and NewExternalId parameters
+const oldId = getUrlParameter('OldExternalId');
+const newId = getUrlParameter('NewExternalId');
+window.onload = function(){
+    console.log(newId)
+    if(oldId && newId)
+    {
+        displayOutput('OldExternalId,NewExternalId\n'+oldId+','+newId+'\n','OldExternalId,NewExternalId\n'+newId+',zzz_'+newId+'\n','usernameSwap_'+newId+'.csv')
+    }
+}
+
 function processFile() {
     console.log("Processing Started...")
     var fileInput = document.getElementById('fileInput');
@@ -65,7 +82,7 @@ function processFile() {
     var downloadLink = document.createElement('a');
     downloadLink.href = '#';
     downloadLink.download = modifiedFilename;
-    downloadLink.textContent = 'Download modified CSV';
+    downloadLink.textContent = 'Download zzz_ CSV (run first)';
     downloadLink.addEventListener('click', function() {
       var blob = new Blob([modifiedContents], { type: 'text/csv' });
       downloadLink.href = URL.createObjectURL(blob);
@@ -74,16 +91,18 @@ function processFile() {
     var downloadLink2 = document.createElement('a');
     downloadLink2.href = '#';
     downloadLink2.download = originalFilename;
-    downloadLink2.textContent = 'Download original CSV';
+    downloadLink2.textContent = 'Download real CSV (run second)';
     downloadLink2.addEventListener('click', function() {
       var blob = new Blob([originalContents], { type: 'text/csv' });
       downloadLink2.href = URL.createObjectURL(blob);
     });
   
 
-    outputContainer.innerHTML = '';        outputContainer.appendChild(downloadLink2);
-
+    outputContainer.innerHTML = '';        
     outputContainer.appendChild(downloadLink);
+    outputContainer.appendChild(document.createElement('br'));
+    outputContainer.appendChild(downloadLink2);
+
 
     outputContainer.appendChild(document.createElement('hr'));
     outputContainer.appendChild(document.createElement('p')).textContent = 'Original CSV:';
