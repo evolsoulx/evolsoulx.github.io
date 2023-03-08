@@ -1,0 +1,54 @@
+.container {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.header {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.hero-creator form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.hero-creator label {
+	margin-bottom: 10px;
+}
+
+.battle {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.enemy-container, .hero-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.enemy-stats, .hero-stats {
+	margin-left: 20px;
+}
+
+.enemy-stats h3, .hero-stats h3 {
+	margin-bottom: 10px;
+}
+
+.hero-stats span, .enemy-stats span {
+	font-weight: bold;
+}
+
+.resources {
+	margin-top: 20px;
+}
+
+.resources p {
+	margin-bottom: 10px;
+}
