@@ -1,0 +1,120 @@
+      
+      /*debug*/
+      #main{
+  
+        background-color: black !important;
+        height: 100%;
+        width: 100%;
+      }   
+      /*debug*/
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        padding: 0;
+    
+      }
+      
+      #squirrel-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      #squirrel {
+        position: absolute;
+        width: 104px;
+        height: 104px;
+        background-image: url('squirrelSprite.png');
+        background-position: 0 0;
+        transform: scale(2);
+      }
+      
+      .animate-squirrel {
+        animation-name: squirrel-anim;
+        animation-duration: 1s;
+        animation-timing-function: steps(5);
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: none;
+        animation-play-state: running;
+      }
+      
+      @keyframes squirrel-anim {
+        from { background-position: 0 0; }
+        to { background-position:  0 -520px; }
+      }
+
+/*SQUIRREL_OS taskbar*/
+.taskbar {
+  font-family: 'Tahoma', sans-serif;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  background-color: #BCC3C4;
+}
+
+.start-button {
+  background-color: #BCC3C4;
+  border: 1px solid #000;
+  padding: 2px 5px;
+  cursor: pointer;
+  margin:5px;
+}
+
+.window {
+  background-color: #c0c0c0;
+  border: 1px solid #000;
+  padding: 2px 5px;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.window.active {
+  background-color: #a0a0a0;
+  border-top: 1px solid #000;
+  border-left: 1px solid #000;
+  border-bottom: 1px solid #c0c0c0;
+  border-right: 1px solid #c0c0c0;
+  padding-top: 3px;
+  padding-left: 6px;
+}
+
+.time {
+  margin-left: auto;
+  padding-right: 10px;
+  position: relative;
+  height: 16px;
+  line-height: 16px;
+}
+
+.time-bar {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 2px;
+  background-color: #a0a0a0;
+}
+
+.time.active {
+  background-color: #a0a0a0;
+  border-top: 1px solid #000;
+  border-left: 1px solid #000;
+  border-bottom: 1px solid #c0c0c0;
+  border-right: 1px solid #c0c0c0;
+  padding-top: 3px;
+  padding-left: 6px;
+  box-shadow: inset 1px 1px 1px #808080;
+}
+
+.vertical-bar {
+  height: 70%;
+  border-left: 1px solid #c0c0c0;
+  border-right: 1px solid #808080;
+  margin-right: 5px;
+}
