@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Query Builder</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>SQL Query Builder</h1>
+    <textarea id="sqlResult" rows="10" cols="50">Paste your SQL Select result here</textarea><br/>
+    <button id="runButton">Run</button>
+    <div id="output">
+        <!-- Buttons will be generated here -->
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(text).select();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+
+        $("#runButton").click(function() {
+            var lines = $("#sqlResult").val().split("\n");
+            var data = {};
+            lines.forEach(function(line) {
+                var parts = line.split("\t");
+                if (parts.length === 3) {
+                    if (!(parts[1] in data)) {
+                        data[parts[1]] = [];
+                    }
+                    data[parts[1]].push(parts[2]);
+                }
+            });
+
+            $("#output").empty();
+
+            for (var clientConfigID in data) {
+                var packageAnswerIDs = data[clientConfigID].join(',');
+                var insertSql = `INSERT INTO AYEQ_triggerbridge(clientConfigID, status, statusDescription, emailIDs, recordsToProcess, totalRecordCount, bridgedRecordCount, errorRecordCount, createdDate, updatedBy, updatedDate, deleteStatus, source) VALUES (${clientConfigID}, 'w', NULL, 'tfilliater@anthology.com', '${packageAnswerIDs}', ${data[clientConfigID].length}, 0, 0, getdate(), 47, getdate(), 0, 'm')`;
+
+                var $button = $("<button>").text("Copy Query for clientConfigID " + clientConfigID).click(function(insertSql) {
+                    return function() {
+                        copyToClipboard(insertSql);
+                    };
+                }(insertSql));
+
+                $("#output").append($button);
+            }
+        });
+    </script>
+</body>
+</html>
