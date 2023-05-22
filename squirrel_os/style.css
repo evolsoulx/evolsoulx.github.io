@@ -12,6 +12,7 @@
         height: 1080px;
         margin: 0;
         padding: 0;
+        background-color: #87CEEB; /* sky blue */
       }
       
       #squirrel-container {
@@ -21,13 +22,11 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background-image: url(setbg2.jpg);
-        background-size: cover;
       }
   
       #squirrel {
         position: absolute;
-        bottom: 50px; /* initially at the bottom */
+        bottom: 44px; /* initially at the bottom */
         right: 10px; /* initially at the right */
         width: 62px;
         height: 36px;
@@ -124,4 +123,23 @@
   border-left: 1px solid #c0c0c0;
   border-right: 1px solid #808080;
   margin-right: 5px;
+}
+
+
+.grassy-field {
+  height: 50px;
+  width: 100%;
+  background: #008000; /* green */
+  position: relative;
+}
+
+.grassy-field::before {
+  content: "";
+  width: 100%;
+  height: 55px;
+  position: absolute;
+  background-image: url('ground.jpg');
+  background-repeat: repeat-x;
+  background-size: 3%;
+  bottom: 0;
 }

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>AAAAA</title>
     <link rel="stylesheet" href="style.css"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+
   </head>
   <body>
     <div id="main">
@@ -26,6 +29,44 @@
     </div>
 
   </div>
+
+  <div class="chat-container">
+    <div id="chat-messages"></div>
+  </div>
+
+  <script>
+    const channelName = 'squirrelville';
+    const chatMessages = document.getElementById('chat-messages');
+
+    // Connect to Twitch Chat
+    const socket = io('https://tmi.twitch.tv/');
+    socket.on('connect', () => {
+      socket.emit('join', `#${channelName}`);
+    });
+
+    // Handle chat messages
+    socket.on('chat', (channel, user, message) => {
+      // Create chat bubble
+      const bubble = document.createElement('div');
+      bubble.classList.add('chat-bubble');
+      bubble.innerText = `${user}: ${message}`;
+
+      chatMessages.appendChild(bubble);
+
+      // Fade out after 5 seconds
+      setTimeout(() => {
+        bubble.style.opacity = 0;
+        setTimeout(() => {
+          bubble.remove();
+        }, 500);
+      }, 5000);
+    });
+  </script>
+
+
+
+
+  <div class="grassy-field"></div>
     <script src="script.js"></script>
 
           </body>
