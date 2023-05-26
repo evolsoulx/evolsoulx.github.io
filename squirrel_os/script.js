@@ -3,17 +3,26 @@ let debugDistance = null; // Debug variable for the distance of a move
 let debugSpeed = null; // Debug variable for the speed of a move
 let debugRestMin = null; // Debug variable for the minimum rest time between moves
 let debugRestMax = null; // Debug variable for the maximum rest time between moves
+// Function to get the value of a URL parameter
+function getUrlParameter(parameter) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(parameter);
+}
+
+// Get the value of the "channel" parameter or set a default value
+const channel = getUrlParameter('channel') || 'squirrelville';
 
 // Get the squirrel container element
 const squirrelContainer = document.getElementById('squirrel-container');
 // Load existing users from local storage or initialize an empty array
-var users = JSON.parse(localStorage.getItem('users')) || [];
+var users = JSON.parse(localStorage.getItem(channel.toString()+'_users')) || [];
 
 // Function to generate a random color
 function getRandomColor() {
     const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFFF00'];
     return colors[Math.floor(Math.random() * colors.length)];
 }
+
 
 // Function to generate a squirrel for a user
 function generateSquirrel(username, color) {
@@ -106,7 +115,7 @@ function generateSquirrel(username, color) {
 }
 
 // Retrieve the list of users from local storage
-users = JSON.parse(localStorage.getItem('users')) || [];
+users = JSON.parse(localStorage.getItem(channel.toString()+'_users')) || [];
 
 // Get the current timestamp
 const currentTimestamp = Date.now();
@@ -142,7 +151,7 @@ const client = new tmi.Client({
         secure: true,
         reconnect: true,
     },
-    channels: ['squirrelville'],
+    channels: [channel],
 });
 
 
@@ -183,15 +192,12 @@ client.on('message', (channel, tags, message, self) => {
 
     // Extract relevant information
     const username = tags.username;
-
-    // Handle the chat message
-    handleChatMessage(username, message);
-    // Extract relevant information
     const time = new Date().toISOString();
     const color = users.find(user => user.username === username)?.color || getRandomColor();
 
     // Update the user or add a new user to the local storage
     const userIndex = users.findIndex(user => user.username === username);
+
     if (userIndex !== -1) {
         users[userIndex].lastMessageTime = time;
     } else {
@@ -200,10 +206,12 @@ client.on('message', (channel, tags, message, self) => {
             lastMessageTime: time,
             color,
         });
+        generateSquirrel(username, color);
+
     }
 
     // Save the updated users to the local storage
-    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem(channel.toString()+'_users', JSON.stringify(users));
 
     // Log the chat message
     const chatMessage = {
@@ -211,6 +219,9 @@ client.on('message', (channel, tags, message, self) => {
         username,
         message,
     };
+
+        // Handle the chat message
+    handleChatMessage(username, message);
     console.log(JSON.stringify(chatMessage));
 });
 
