@@ -3,7 +3,7 @@ let debugDistance = null; // Debug variable for the distance of a move
 let debugSpeed = null; // Debug variable for the speed of a move
 let debugRestMin = null; // Debug variable for the minimum rest time between moves
 let debugRestMax = null; // Debug variable for the maximum rest time between moves
-let debugVisuals = true; // Debug variable for visualizing the next moves
+let debugVisuals = false; // Debug variable for visualizing the next moves
 
 // Get the squirrel and container elements
 const squirrel = document.getElementById('squirrel');

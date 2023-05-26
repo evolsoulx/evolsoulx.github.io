@@ -2,7 +2,7 @@
       /*debug*/
       #main{
   
-        background-color: black !important;
+        /* background-color: black !important; */
         height: 100%;
         width: 100%;
       }   
@@ -13,7 +13,7 @@
         height: 1080px;
         margin: 0;
         padding: 0;
-        background-color: #87CEEB; /* sky blue */
+        /* background-color: #87CEEB; sky blue */
       }
       
       #squirrel-container {
