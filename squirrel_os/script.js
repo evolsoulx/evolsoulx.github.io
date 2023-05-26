@@ -19,10 +19,13 @@ var users = JSON.parse(localStorage.getItem(channel.toString()+'_users')) || [];
 
 // Function to generate a random color
 function getRandomColor() {
-    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFFF00'];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
+  const hue = Math.floor(Math.random() * 360); // Generate a random hue value between 0 and 360
 
+  // Convert the hue value to HSL format with a saturation of 100% and lightness of 50%
+  const color = `hsl(${hue}, 100%, 50%)`;
+
+  return color;
+}
 
 // Function to generate a squirrel for a user
 function generateSquirrel(username, color) {
