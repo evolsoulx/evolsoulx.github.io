@@ -1,6 +1,5 @@
 const squirrel = document.getElementById('squirrel');
 const container = document.getElementById('squirrel-container');
-squirrel
 const speed = 5;
 let dx = 0;
 

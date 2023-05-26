@@ -4,6 +4,7 @@
     <title>AAAAA</title>
     <link rel="stylesheet" href="style.css"> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+    <script src="tmi.min.js"></script>
 
   </head>
   <body>
@@ -29,43 +30,18 @@
     </div>
 
   </div>
-
-  <div class="chat-container">
-    <div id="chat-messages"></div>
-  </div>
-
   <script>
-    const channelName = 'squirrelville';
-    const chatMessages = document.getElementById('chat-messages');
+    const client = new tmi.Client({
+	channels: [ 'my_name' ]
+});
 
-    // Connect to Twitch Chat
-    const socket = io('https://tmi.twitch.tv/');
-    socket.on('connect', () => {
-      socket.emit('join', `#${channelName}`);
-    });
+client.connect();
 
-    // Handle chat messages
-    socket.on('chat', (channel, user, message) => {
-      // Create chat bubble
-      const bubble = document.createElement('div');
-      bubble.classList.add('chat-bubble');
-      bubble.innerText = `${user}: ${message}`;
-
-      chatMessages.appendChild(bubble);
-
-      // Fade out after 5 seconds
-      setTimeout(() => {
-        bubble.style.opacity = 0;
-        setTimeout(() => {
-          bubble.remove();
-        }, 500);
-      }, 5000);
-    });
+client.on('message', (channel, tags, message, self) => {
+	// "Alca: Hello, World!"
+	console.log(`${tags['display-name']}: ${message}`);
+});
   </script>
-
-
-
-
   <div class="grassy-field"></div>
     <script src="script.js"></script>
 
