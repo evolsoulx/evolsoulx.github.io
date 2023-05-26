@@ -3,9 +3,7 @@
   <head>
     <title>squirrel_os</title>
     <link rel="stylesheet" href="style.css"> 
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
-    <script src="tmi.min.js"></script>-->
-
+    <script src="tmi.min.js"></script>
   </head>
   <body>
 
@@ -31,22 +29,10 @@
     <div id="squirrel-container">
       <img id="mainLogo" src="signLogo.png" alt="">
 
-      <div id="squirrel" class="animate-squirrel"></div>
+      <!-- <div id="squirrel" class="animate-squirrel"></div> -->
     </div>
 
   </div>
-  <script>/*
-    const client = new tmi.Client({
-	channels: [ 'my_name' ]
-});
-
-client.connect();
-
-client.on('message', (channel, tags, message, self) => {
-	// "Alca: Hello, World!"
-	console.log(`${tags['display-name']}: ${message}`);
-});*/
-  </script>
   <div class="grassy-field"></div>
     <script src="script.js"></script>
 
