@@ -3,11 +3,12 @@
   <head>
     <title>AAAAA</title>
     <link rel="stylesheet" href="style.css"> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
-    <script src="tmi.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+    <script src="tmi.min.js"></script>-->
 
   </head>
   <body>
+
     <div id="main">
     <div class="taskbar">
       <div class="start-button">
@@ -19,18 +20,22 @@
         <img src="winamp.png" width="16" height="16"> WinAmp: 01. Squirrel MEGAMIX
     
       </div>
-    
+    <div class="window">
+      Live 8am - 8pm EST Monday - Friday until Affiliate, please follow!
+    </div>
       <div class="vertical-bar"></div>
     
-      <div class="time" id="time">00:00</div>
+      <div class="time window" id="time">00:00</div>
     </div>
     
     <div id="squirrel-container">
+      <img id="mainLogo" src="signLogo.png" alt="">
+
       <div id="squirrel" class="animate-squirrel"></div>
     </div>
 
   </div>
-  <script>
+  <script>/*
     const client = new tmi.Client({
 	channels: [ 'my_name' ]
 });
@@ -40,7 +45,7 @@ client.connect();
 client.on('message', (channel, tags, message, self) => {
 	// "Alca: Hello, World!"
 	console.log(`${tags['display-name']}: ${message}`);
-});
+});*/
   </script>
   <div class="grassy-field"></div>
     <script src="script.js"></script>
