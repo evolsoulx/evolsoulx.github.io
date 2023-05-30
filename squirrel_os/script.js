@@ -2,8 +2,8 @@
 console.log('script.js')
 let debugDistance = null; // Debug variable for the distance of a move
 let debugSpeed = null; // Debug variable for the speed of a move
-let debugRestMin = 3333; // Debug variable for the minimum rest time between moves
-let debugRestMax = 3333; // Debug variable for the maximum rest time between moves
+let debugRestMin = null; // Debug variable for the minimum rest time between moves
+let debugRestMax = null; // Debug variable for the maximum rest time between moves
 // Function to get the value of a URL parameter
 function getUrlParameter(parameter) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -49,9 +49,21 @@ function generateSquirrel(username, color) {
 
     // Function to generate a move
     function generateMove() {
+
+        let randomNumber = Math.random();
+        let timeInMilliseconds;
+
+        if (randomNumber < 0.001) {
+            console.log('instant!');
+        // 0.1% chance of instant result
+        timeInMilliseconds = 1;
+        } else {
+        // 99.9% chance of generating time between 5 seconds and 5 minutes
+         timeInMilliseconds = Math.round(Math.random() * 295 + 5) * 1000;
+        }
         const point = debugDistance ?? Math.round(Math.pow(Math.random(), 2) * maxRight);
         const speed = debugSpeed ?? speeds[Math.floor(Math.random() * speeds.length)];
-        const restTime = debugRestMin && debugRestMax ? Math.round(Math.random() * (debugRestMax - debugRestMin) + debugRestMin) : Math.round(Math.random() * 25 + 5) * 1000; // 5 to 30 seconds
+        const restTime = debugRestMin && debugRestMax ? Math.round(Math.random() * (debugRestMax - debugRestMin) + debugRestMin) : timeInMilliseconds; // 5 to 30 seconds
 
         return {
             point,
