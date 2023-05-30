@@ -1,29 +1,18 @@
 // Debug variables
+console.log('script.js')
 let debugDistance = null; // Debug variable for the distance of a move
 let debugSpeed = null; // Debug variable for the speed of a move
-let debugRestMin = null; // Debug variable for the minimum rest time between moves
-let debugRestMax = null; // Debug variable for the maximum rest time between moves
+let debugRestMin = 3333; // Debug variable for the minimum rest time between moves
+let debugRestMax = 3333; // Debug variable for the maximum rest time between moves
 // Function to get the value of a URL parameter
 function getUrlParameter(parameter) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(parameter);
 }
 
-// Get the value of the "channel" parameter or set a default value
-const channel = getUrlParameter('channel') || 'squirrelville';
-
-// Get the squirrel container element
-const squirrelContainer = document.getElementById('squirrel-container');
-// Load existing users from local storage or initialize an empty array
-var users = JSON.parse(localStorage.getItem(channel.toString()+'_users')) || [];
-
-// Function to generate a random color
 function getRandomColor() {
-  const hue = Math.floor(Math.random() * 360); // Generate a random hue value between 0 and 360
-
-  // Convert the hue value to HSL format with a saturation of 100% and lightness of 50%
+  const hue = Math.floor(Math.random() * 360); 
   const color = `hsl(${hue}, 100%, 50%)`;
-
   return color;
 }
 
@@ -102,7 +91,7 @@ function generateSquirrel(username, color) {
 
             // Schedule next movement and generate next move
             setTimeout(() => {
-                if (moveQueue.length < 5) {
+                if (moveQueue.length < 2) {
                     moveQueue.push(generateMove());
                 }
                 moveSquirrel();
@@ -111,28 +100,31 @@ function generateSquirrel(username, color) {
     }
 
     // Start moving
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
         moveQueue.push(generateMove());
     }
     moveSquirrel();
 }
 
-// Retrieve the list of users from local storage
-users = JSON.parse(localStorage.getItem(channel.toString()+'_users')) || [];
-
-// Get the current timestamp
-const currentTimestamp = Date.now();
-
-// Iterate over the users
-users.forEach((user) => {
-    // Check if the user's last message is within the last 60 minutes
-    const lastMessageTimestamp = new Date(user.lastMessageTime).getTime();
-    if (currentTimestamp - lastMessageTimestamp <= 60 * 60 * 1000) {
-        // Generate a squirrel for the user with a random color
-        generateSquirrel(user.username, user.color);
+function updateColor(user, newColor) {
+    const userIndex = users.findIndex(u => u.username === user);
+    if (userIndex !== -1) {
+      users[userIndex].color = newColor;
+      localStorage.setItem('#'+channel.toString()+'_users', JSON.stringify(users));
     }
-});
-
+  
+    // Refresh the color in the squirrel name
+    const squirrels = document.querySelectorAll('.squirrel');
+    for (const squirrel of squirrels) {
+      const nameElement = squirrel.querySelector('.squirrel-name');
+      if (nameElement.textContent === user) {
+        nameElement.style.backgroundColor = newColor;
+        console.log('Squirrel name color refreshed');
+        break; // Exit the loop after finding the matching squirrel
+      }
+    }
+  }
+    
 
 //timer for taskbar.
 function updateTime() {
@@ -143,6 +135,30 @@ function updateTime() {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     timeElement.textContent = `${hours}:${minutes}:${seconds}`;
 }
+
+// Get the value of the "channel" parameter or set a default value
+const channel = getUrlParameter('channel') || 'squirrelville';
+console.log(channel.toString()+'_users')
+// Get the squirrel container element
+const squirrelContainer = document.getElementById('squirrel-container');
+// Load existing users from local storage or initialize an empty array
+var users = JSON.parse(localStorage.getItem('#'+channel.toString()+'_users')) || [];
+console.log(users)
+// Function to generate a random color
+
+// Get the current timestamp
+const currentTimestamp = Date.now();
+
+// Iterate over the users
+users.forEach((user) => {
+    console.log(user)
+    // Check if the user's last message is within the last 60 minutes
+    const lastMessageTimestamp = new Date(user.lastMessageTime).getTime();
+        //eventually add limits here
+    generateSquirrel(user.username, user.color);
+});
+
+
 
 setInterval(updateTime, 1000);
 updateTime();
@@ -157,13 +173,6 @@ const client = new tmi.Client({
     channels: [channel],
 });
 
-
-// Function to generate a random color
-function getRandomColor() {
-    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#00FFFF', '#FFFF00'];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
 // Function to handle chat messages
 function handleChatMessage(username, message) {
     const squirrels = document.querySelectorAll('.squirrel');
@@ -172,16 +181,23 @@ function handleChatMessage(username, message) {
         if (nameElement.textContent === username) {
             const chatBubble = document.createElement('div');
             chatBubble.classList.add('chat-bubble');
-            chatBubble.textContent = message;
+            chatBubble.textContent = "+1";
             squirrel.appendChild(chatBubble);
 
             // Remove the chat bubble after a certain duration (e.g., 5 seconds)
             setTimeout(() => {
                 chatBubble.remove();
-            }, 10000);
+            }, 5000);
 
             break; // Exit the loop after finding the matching squirrel
         }
+    }
+
+    if(message.indexOf('!color') != -1)
+    {
+        try{
+            updateColor(username, message.split(" ")[1]);
+        } catch(e){console.log(e);}
     }
 }
 // Listen for the connection event
@@ -223,7 +239,7 @@ client.on('message', (channel, tags, message, self) => {
         message,
     };
 
-        // Handle the chat message
+    // Handle the chat message
     handleChatMessage(username, message);
     console.log(JSON.stringify(chatMessage));
 });
