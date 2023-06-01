@@ -38,7 +38,7 @@ function generateSquirrel(username, color) {
     // Add the animation class to the squirrel
     sprite.classList.add('animate-squirrel');
     // Speeds for the movements
-    const speeds = [1, 2, 4]; // slow, medium, fast
+    const speeds = [15, 5, 10]; // slow, medium, fast
 
     // Maximum right position for the squirrel
     const maxRight = squirrelContainer.offsetWidth - squirrel.offsetWidth; // maximum 'right' value to not exceed the container
