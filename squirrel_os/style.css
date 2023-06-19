@@ -103,15 +103,17 @@ html, body {
 #mainLogo {
   z-index: 99999;
   position: absolute;
-  top: 920px;
+  top: 0px;
 }
 
 .squirrel {
   position: absolute;
-  bottom: 85px;
-  right: 10px;
-  width: 62px;
-  height: 35px;
+bottom: 35px;
+right: 10px;
+width: 32px;
+height: 32px;
+
+z-index: 999999999;
 }
 
 .sprite {
