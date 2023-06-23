@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blink-182 and Squirrels</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+        }
+        #game-box {
+            position: relative;
+            height: 300px;
+            width: 600px;
+            border: 1px solid black;
+        }
+        .guitar, .note {
+            position: absolute;
+            bottom: 0;
+        }
+        .note {
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Parallel Beats: Nature Meets Music</h1>
+        <p>Exploring the unexpected parallels between Blink-182 and Squirrels</p>
+    </header>
+
+    <main>
+        <p>Your content goes here...</p>
+    </main>
+
+    <div id="game-box">
+        <div class="guitar">🎸</div>
+        <div class="note">🎵</div>
+    </div>
+
+    <script>
+        const guitar = document.querySelector('.guitar');
+        const note = document.querySelector('.note');
+        let direction = null;
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'ArrowLeft') direction = 'left';
+            if (event.code === 'ArrowRight') direction = 'right';
+        });
+
+        document.addEventListener('keyup', () => {
+            direction = null;
+        });
+
+        setInterval(() => {
+            const left = parseInt(window.getComputedStyle(guitar).left);
+            if (direction === 'left' && left > 0) guitar.style.left = `${left - 5}px`;
+            if (direction === 'right' && left < 560) guitar.style.left = `${left + 5}px`;
+            note.style.left = `${Math.random() * 560}px`;
+        }, 50);
+    </script>
+</body>
+</html>
