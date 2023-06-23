@@ -137,17 +137,6 @@ function updateColor(user, newColor) {
     }
   }
     
-
-//timer for taskbar.
-function updateTime() {
-    const timeElement = document.getElementById('time');
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-}
-
 // Get the value of the "channel" parameter or set a default value
 const channel = getUrlParameter('channel') || 'squirrelville';
 console.log(channel.toString()+'_users')
@@ -172,8 +161,6 @@ users.forEach((user) => {
 
 
 
-setInterval(updateTime, 1000);
-updateTime();
 
 
 // Create a new instance of the Twitch client
@@ -193,7 +180,7 @@ function handleChatMessage(username, message) {
         if (nameElement.textContent === username) {
             const chatBubble = document.createElement('div');
             chatBubble.classList.add('chat-bubble');
-            chatBubble.textContent = "+1";
+            chatBubble.textContent = "Squeak Squeak!";
             squirrel.appendChild(chatBubble);
 
             // Remove the chat bubble after a certain duration (e.g., 5 seconds)
@@ -265,3 +252,41 @@ client.on('error', (error) => {
 client.connect().catch((error) => {
     console.error(`Failed to connect to chat: ${error}`);
 });
+
+
+
+
+/*KICKBOT */
+const URL = "https://kick.com/api/v2/channels/7963482/messages";
+
+// Fetch messages function
+async function fetchMessages(url) {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.data.messages;
+}
+
+// Function to call with username
+function processUser(username) {
+  // Do something with the username
+  console.log("Processing user: ", username);
+}
+
+// Main function
+async function getLastFiveMessages(url) {
+  const messages = await fetchMessages(url);
+  let lastFiveMessages = messages.slice(-5);
+  
+  // Process each unique user
+  let uniqueUsers = [...new Set(lastFiveMessages.map(message => message.sender.username))];
+  uniqueUsers.forEach(user => processUser(user));
+
+  return JSON.stringify(lastFiveMessages);
+}
+
+// Check for new messages every 30 seconds
+setInterval(async function() {
+  let messages = await getLastFiveMessages(URL);
+  // Do something with the messages
+  console.log(messages);
+}, 3000);
