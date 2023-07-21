@@ -45,26 +45,5 @@
         <div class="note">🎵</div>
     </div>
 
-    <script>
-        const guitar = document.querySelector('.guitar');
-        const note = document.querySelector('.note');
-        let direction = null;
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'ArrowLeft') direction = 'left';
-            if (event.code === 'ArrowRight') direction = 'right';
-        });
-
-        document.addEventListener('keyup', () => {
-            direction = null;
-        });
-
-        setInterval(() => {
-            const left = parseInt(window.getComputedStyle(guitar).left);
-            if (direction === 'left' && left > 0) guitar.style.left = `${left - 5}px`;
-            if (direction === 'right' && left < 560) guitar.style.left = `${left + 5}px`;
-            note.style.left = `${Math.random() * 560}px`;
-        }, 50);
-    </script>
 </body>
 </html>

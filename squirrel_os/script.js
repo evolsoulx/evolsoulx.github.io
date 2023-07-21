@@ -152,11 +152,12 @@ const currentTimestamp = Date.now();
 
 // Iterate over the users
 users.forEach((user) => {
-    console.log(user)
-    // Check if the user's last message is within the last 60 minutes
+    // Check if the user's last message is within the last 24 hours
     const lastMessageTimestamp = new Date(user.lastMessageTime).getTime();
-        //eventually add limits here
-    generateSquirrel(user.username, user.color);
+    const timeDifferenceInHours = (currentTimestamp - lastMessageTimestamp) / (1000 * 60 * 60);
+    if (timeDifferenceInHours <= 24) {
+        generateSquirrel(user.username, user.color);
+    }
 });
 
 
