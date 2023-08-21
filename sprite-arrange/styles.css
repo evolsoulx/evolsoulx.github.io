@@ -1,0 +1,106 @@
+#spriteCanvas {
+    display: none; /* Hide the main canvas as we're using smaller canvases for display and interaction */
+}
+
+#spriteList {
+    display: flex;
+    flex-direction: column;
+}
+
+.draggable {
+        transform-origin: top left;
+transform: scale(1);
+
+    width: fit-content;
+    border: 1px solid #ccc;
+    margin-bottom: 2px;
+    cursor: move;
+}
+
+
+
+
+
+/* Reset some default styles for a cleaner look */
+body, html, canvas {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#spriteList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;  /* Creates space between draggable items */
+    margin-bottom: 20px;
+}
+
+.draggable {
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.draggable:hover {
+    border-color: #888;
+}
+
+#animations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Additional Styles */
+#fileInput, #saveButton {
+    display: block;
+    margin: 10px 0;
+}
+
+canvas {
+    border: 1px solid #000;
+}
+
+#scaleSlider {
+    width: 200px;
+}
