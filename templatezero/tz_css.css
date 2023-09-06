@@ -1,33 +1,54 @@
 /* CSS Variables for easy customization */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz@0,6..12;1,6..12&display=swap');
 :root {
     --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --header-bg-color: #f8f9fa;
+    --secondary-color: #dbdcddab;
+    --header-bg-color: #00ff15;
     --header-text-color:#FFFFFF;
+    --required-red:#d92632;
 }
 
 /* Typography */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Nunito Sans', sans-serif;
 }
 
 /* Section Wrapper */
-#hobsonsBasicInformationDiv {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.hobsonsIPInnerDiv {
+    padding: 5px;
+    background-color:var(--secondary-color);
+    margin:20px;
 }
 
-/* Title & Subtitle */
-#hobsonsBasicInformationTitle h2 {
-    color: var(--primary-color);
-    background-color: var(--header-bg-color);
-
-    font-size: 1.8em;
-    margin-bottom: 10px;
+.hobsonsIPTitle h2 {
+    margin:0;
+    padding:0;
+    font-family: 'Nunito Sans', sans-serif; /* Use your custom Google Font */
+    font-weight: 700; /* Bold font-weight */
+    color: var(--primary-color); /* Font color */
+    padding: 0px 0px 0px 0px; /* Spacing around the text */
+    text-align: center; /* Center-align the text */
+    position: relative; /* Position for accent shape */
+    display: inline-block;
+    width:auto;
+    border-bottom:var(--header-bg-color) 2px solid;
 }
 
-#hobsonsBasicInformationSubtitle {
+/* Use Font Awesome icons after the text */
+.hobsonsIPTitle h2::after {
+    content: "\f004"; /* Unicode character code for the Font Awesome icon you want */
+    font-family: 'Font Awesome 5 Free'; /* Specify the Font Awesome font family */
+    font-weight: 900; /* Bold style for Font Awesome solid icons */
+    font-size: 18px; /* Adjust the icon size as needed */
+    position: absolute;
+    top: 50%;
+    right: -30px; /* Adjust the distance from the right side */
+    transform: translateY(-50%);
+    color: var(--header-bg-color); /* Font color for the icon */
+}
+
+
+.hobsonsIPTitle {
     color: var(--secondary-color);
     font-size: 1em;
     margin-bottom: 20px;

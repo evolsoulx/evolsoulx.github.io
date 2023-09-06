@@ -80,28 +80,6 @@
 	margin: 0px;
 }
 
-/**************************************************************/
-/*To move first middle and last name fields to one line - Comment this out to END comment if fields need to be one on a line*/
-/**************************************************************/
-#hobsonsfirstnameParent,
-#hobsonsmiddlenameParent,
-#hobsonslastnameParent,
-#hobsonsfirstnameParent input,
-#hobsonsmiddlenameParent input,
-#hobsonslastnameParent input,
-#hobsonsIPLabelWrapperfirstname,
-#hobsonsIPLabelWrappermiddlename,
-#hobsonsIPLabelWrapperlastname {
-	float: left;
-	margin: 0px 0px 0px 0px;
-	width: 150px;
-}
-/*If usings middle name, not MI, comment out the next area*/
-/*#hobsonsmiddlenameParent input,#hobsonsmiddlenameParent,#hobsonsIPLabelWrappermiddlename {
-width:20px;
-}*/
-/*end MI*/
-
 #hobsonsmiddlenameParent,
 #hobsonslastnameParent {
 	margin-left: 10px;
@@ -111,22 +89,11 @@ width:20px;
 #hobsonsIPWidgetDivlastname {
 	clear: both;
 }
-#hobsonsIPLabelWrapperfirstname label,
-#hobsonsIPLabelWrapperlastname label,
-#hobsonsIPLabelWrappermiddlename label,
-.hobsonsRequiredAsterisks {
-	font-size: .8em;
-}
-#hobsonsIPLabelWrapperFullName {
-	margin-top: 14px;
-}
-/*END of move first middle and last name fields to one line*/
 
 /*Comment in if moving names to one per line*/
-/*#hobsonsIPLabelWrapperFullName {
+#hobsonsIPLabelWrapperFullName {
 display:none;
 }
-*/
 
 /*Use this area to set the styles for floating fields*/
 
