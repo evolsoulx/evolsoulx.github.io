@@ -1,0 +1,21 @@
+/* Reset */
+html, body {
+    margin: 0;
+    padding: 0;
+    width:1920px;
+    height:1080px;
+  }
+  
+  /* Global Styles */
+  #main {
+    height: 100%;
+    width: 100%;
+  }
+
+  #chatNow {
+    z-index: 0;
+    position: absolute;
+    bottom: 55px;
+    left:55px;
+    width:300px;
+  }

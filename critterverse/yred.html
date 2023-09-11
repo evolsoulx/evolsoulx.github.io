@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include the Firebase JavaScript SDK from the Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <!-- Your HTML content here -->
+    <script>
+        // Initialize Firebase with your Firebase project's config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdSPG5298ut99azpH9k1MXqsBU82GOg9U",
+          authDomain: "critterverse.firebaseapp.com",
+          projectId: "critterverse",
+          storageBucket: "critterverse.appspot.com",
+          messagingSenderId: "782384313016",
+          appId: "1:782384313016:web:031e37fadbb6b2494dba4d",
+          measurementId: "G-QV7N48M35P"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Now you can use the Firebase SDK to interact with Firebase services, including Realtime Database.
+        const database = firebase.database();
+
+        // Your Firebase code here
+    </script>
+</body>
+</html>
