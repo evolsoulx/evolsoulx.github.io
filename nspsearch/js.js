@@ -18,15 +18,49 @@ fetch(RSS_URL)
         items.forEach(el=>
             {
                 let storyTitle = el.querySelector('title').innerHTML;
-                if(storyTitle.indexOf(seasonNumber) != -1)
+                let storyDescription = el.querySelector('description').innerHTML;
+                let storyDate = el.querySelector('pubDate').innerHTML;
+
+                // Get all selected options from the multi-select
+                let selectedSeasons = Array.from(document.getElementById('seasonSelect').selectedOptions).map(option => option.value);
+            
+                // Check if the story title includes any of the selected season numbers
+                let isSeasonMatch = selectedSeasons.some(seasonNumber => storyTitle.includes(seasonNumber));
+
+                if(isSeasonMatch)
                 {
+                    let modifyit = document.getElementById('editedContent').checked;
                     
+                    if(modifyit)
+                    {
+                        //Remove fluff after stories for brevity
+                        // Find the index where the specified text begins
+let targetIndex = storyDescription.indexOf('Click here to ');
+
+// Check if the text is found
+if (targetIndex !== -1) {
+    // Find the index of the opening <div> tag before the target text
+    let divStartIndex = storyDescription.lastIndexOf('<div', targetIndex);
+
+    // If an opening <div> tag is found
+    if (divStartIndex !== -1) {
+        // Extract everything before this <div> tag
+        storyDescription = storyDescription.substring(0, divStartIndex);
+    }
+}
+
+
+
+
+                    }
+
+
                 html += `
                 <article>
 
                 <h2>${storyTitle}</h2>
-                Date: ${el.querySelector('pubDate').innerHTML}<br/>
-                ${el.querySelector('description').innerHTML}
+                Date: ${storyDate}<br/>
+                ${storyDescription}
                 </article>
                 `
                 }
