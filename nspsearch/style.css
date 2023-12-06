@@ -1,0 +1,44 @@
+/* General Styles */
+body {
+    background-color: #1b1b1b; /* Dark background */
+    color: #f0f0f0; /* Light text */
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Modern font */
+    line-height: 1.6; /* Spacing for readability */
+    margin: 0;
+    padding: 20px;
+}
+
+/* Article Styles */
+article {
+    background-color: #292929; /* Slightly lighter than the body for contrast */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px; /* Rounded corners for a modern look */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+}
+
+/* Header Styles */
+h2 {
+    color: #e6e6e6; /* Slightly lighter text for headers */
+    margin-top: 0;
+}
+
+/* Link Styles */
+a {
+    color: #1e90ff; /* Bright color for links */
+    text-decoration: none; /* No underlines for a cleaner look */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover for interactivity */
+}
+
+/* Paragraph Styles */
+p {
+    margin-bottom: 15px;
+}
+
+/* Strong tag style for emphasis */
+strong {
+    color: #ff8c00; /* Orange color for strong emphasis */
+}
