@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Sanctuary Search:</h1>
+    <h1>./sanctuary/search://</h1>
     <label for="searchOptions">Options</label>
     <label for="editedContent">Edited Content</label>
     <input type="checkbox" name="editedContent" id="editedContent">
@@ -33,13 +33,9 @@
     <option value="S17">Season 17</option>
     <option value="S18">Season 18</option>
     <option value="S19">Season 19</option>
-    <option value="20">Season 20</option>
-</select>
-
-<!-- Episode Selector -->
-<label for="episodeSelect">Episode:</label>
-<select disabled="true" id="episodeSelect" name="episode">
-<option value="">IN DEV</option>
+    <option  selected="true" value="20">Season 20</option>
+</select><br/><br/>
+<label for="searchTerm">Search</label> <input type="text" name="searchTerm" id="searchTerm">
 </select>
 
     <div id="results"></div>

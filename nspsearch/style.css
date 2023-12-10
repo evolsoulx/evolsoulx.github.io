@@ -9,12 +9,17 @@ body {
 }
 
 /* Article Styles */
-article {
+.episode {
     background-color: #292929; /* Slightly lighter than the body for contrast */
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px; /* Rounded corners for a modern look */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    font-size:11px;
+    overflow-y:scroll;
+    width:300px;
+    height:300px;
+    display:inline-block;
 }
 
 /* Header Styles */
