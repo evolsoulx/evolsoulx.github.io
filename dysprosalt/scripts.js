@@ -1,10 +1,14 @@
 let jsonData = []; // Global variable to hold the JSON data
 let testout;
-
+let tier1Name = "";
+let tier2Name = "";
+let tier3Name = "";
+let tier4Name = "";
+let tier5Name = "";
+let ip="";
 var numTiers = 0;
-
-
-document.getElementById('csvFileInput').addEventListener('change', (event) => {
+function openTheFile(event)
+{
     const file = event.target.files[0];
     Papa.parse(file, {
         header: true, // Treat the first row as headers
@@ -14,13 +18,16 @@ document.getElementById('csvFileInput').addEventListener('change', (event) => {
             displayTable(jsonData);
             validateData(jsonData);
             generateDynamicDropdown(jsonData);
-            
+            generateDDCode(jsonData);
         }
     });
-});
+}
 
+document.getElementById('csvFileInput').addEventListener('change', (event) => {
+    openTheFile(event)});
 
-
+    
+let errorRows = [];
 function displayTable(data) {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
@@ -28,6 +35,10 @@ function displayTable(data) {
 
     // Create table header
     const headerRow = document.createElement('tr');
+    const rowNumHead = document.createElement('th');
+    rowNumHead.textContent = "#";
+    headerRow.appendChild(rowNumHead);
+
     if (data.length > 0) {
         Object.keys(data[0]).forEach(header => {
             const th = document.createElement('th');
@@ -38,9 +49,16 @@ function displayTable(data) {
     thead.appendChild(headerRow);
 
     // Create table body
+    let rowCount = 1;
     data.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
+        const rownumtd = document.createElement('td');
+        rownumtd.textContent = rowIndex;
+        rowCount++;
+        tr.appendChild(rownumtd);
+
         Object.values(row).forEach(cell => {
+
             const td = document.createElement('td');
             td.textContent = cell;
             tr.appendChild(td);
@@ -50,6 +68,7 @@ function displayTable(data) {
         // Highlight the row if it is invalid
         if (!isRowValid(row)) {
             tr.style.backgroundColor = 'red'; // Highlight the entire row
+            errorRows.push(rowIndex);
         }
     });
 
@@ -82,10 +101,18 @@ function validateData(data) {
 
     const statusElement = document.getElementById('validationStatus');
     numTiers = Object.keys(jsonData[0]).length;
-    statusElement.textContent = isValidFile ? 'File is a valid '+parseInt(numTiers/2)+' tiered dynamic dropdown.' : 'File is invalid. Please check highlighted rows.';
+
+       
+    if (Object.keys(jsonData[0])[0]) {tier1Name = Object.keys(jsonData[0])[0];}
+    if (Object.keys(jsonData[0])[2]) {tier2Name = Object.keys(jsonData[0])[2];}
+    if (Object.keys(jsonData[0])[4]) {tier3Name = Object.keys(jsonData[0])[4];}
+    if (Object.keys(jsonData[0])[6]) {tier4Name = Object.keys(jsonData[0])[6];}
+    if (Object.keys(jsonData[0])[8]) {tier5Name = Object.keys(jsonData[0])[8];}
+    let errorText = "The Following Rows are invalid: " + errorRows.toString()+". Please check the rows around these rows for multiple pairs of values on one line. There is a small chance the rows are slightly off if the client has many blank lines in their file.";
+    let validText = 'File is a valid '+parseInt(numTiers/2)+' tiered dynamic dropdown.'
+    statusElement.textContent = isValidFile ? validText : errorText;
     statusElement.style.color = isValidFile ? 'green' : 'red';
 }
-
 
 
 function generateDynamicDropdown(data) {
