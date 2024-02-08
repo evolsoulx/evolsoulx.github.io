@@ -1,0 +1,65 @@
+[gd_scene load_steps=8 format=3 uid="uid://cpct3qse3fft8"]
+
+[ext_resource type="Texture2D" uid="uid://dwluwu2okxud5" path="res://slot-machine5.png" id="1_4tl1o"]
+[ext_resource type="Script" path="res://SlotMachine.gd" id="1_fjo4x"]
+[ext_resource type="Texture2D" uid="uid://c8lmn6l56v2y3" path="res://baseReel1.png" id="4_37bev"]
+[ext_resource type="Texture2D" uid="uid://b8b6mt4yvgt0k" path="res://slot-machine2.png" id="6_fhrxe"]
+[ext_resource type="Texture2D" uid="uid://d37s4g0ic5jg4" path="res://slot-machine4.png" id="7_a4yol"]
+[ext_resource type="Texture2D" uid="uid://csmmq6ggdq343" path="res://slot-machine3.png" id="8_jru87"]
+[ext_resource type="Script" path="res://Button.gd" id="9_pgu2e"]
+
+[node name="MainGame" type="Node2D"]
+
+[node name="SlotMachine" type="Node2D" parent="."]
+position = Vector2(102, 85)
+script = ExtResource("1_fjo4x")
+
+[node name="reelWhite" type="Sprite2D" parent="SlotMachine"]
+visible = false
+position = Vector2(230, 274)
+texture = ExtResource("1_4tl1o")
+
+[node name="handleUp" type="Sprite2D" parent="SlotMachine"]
+visible = false
+position = Vector2(230, 269)
+texture = ExtResource("6_fhrxe")
+
+[node name="machineFront" type="Sprite2D" parent="SlotMachine"]
+visible = false
+position = Vector2(226, 282)
+texture = ExtResource("7_a4yol")
+
+[node name="handleDown" type="Sprite2D" parent="SlotMachine"]
+visible = false
+position = Vector2(230, 286)
+texture = ExtResource("8_jru87")
+
+[node name="reels" type="SubViewport" parent="SlotMachine"]
+
+[node name="reel1" type="Sprite2D" parent="SlotMachine/reels"]
+position = Vector2(107, 139)
+scale = Vector2(1.85938, 1.85938)
+texture = ExtResource("4_37bev")
+
+[node name="reel2" type="Sprite2D" parent="SlotMachine/reels"]
+position = Vector2(229, 264)
+scale = Vector2(1.85938, 1.85938)
+texture = ExtResource("4_37bev")
+
+[node name="reel3" type="Sprite2D" parent="SlotMachine/reels"]
+position = Vector2(360.5, 379)
+scale = Vector2(1.85938, 1.85938)
+texture = ExtResource("4_37bev")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="SpinButton" type="Button" parent="CanvasLayer"]
+offset_left = 241.0
+offset_top = 1048.0
+offset_right = 420.0
+offset_bottom = 1231.0
+script = ExtResource("9_pgu2e")
+
+[connection signal="button_down" from="CanvasLayer/SpinButton" to="SlotMachine" method="_on_spin_button_button_down"]
+[connection signal="button_up" from="CanvasLayer/SpinButton" to="SlotMachine" method="_on_spin_button_button_up"]
+[connection signal="pressed" from="CanvasLayer/SpinButton" to="SlotMachine" method="_on_spin_button_pressed"]

@@ -94,24 +94,8 @@ function generateDynamicDropdown(data) {
     testout = data;
     console.log("data: "+data)
     data.forEach(row => {
-        if (row.category && row.subcategory) {
-            if (!categories[row.category]) {
-                categories[row.category] = [];
-            }
-            categories[row.category].push(row.subcategory);
-        }
+//time to do the data.
+
+
     });
-
-    // Now create a dropdown menu based on categories
-    let dropdown = '<select id="categorySelect">';
-    for (let category in categories) {
-        dropdown += `<optgroup label="${category}">`;
-        categories[category].forEach(subcategory => {
-            dropdown += `<option value="${subcategory}">${subcategory}</option>`;
-        });
-        dropdown += '</optgroup>';
-    }
-    dropdown += '</select>';
-
-    document.getElementById('dataTable').insertAdjacentHTML('afterend', dropdown);
 }
