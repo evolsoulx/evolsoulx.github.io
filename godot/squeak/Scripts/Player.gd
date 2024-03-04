@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 
 #movement
-@export var speed = 100
+@export var speed = 400
 @export var gravity = 200
 @export var jump_height = -100
 var is_attacking = false
@@ -27,16 +27,21 @@ func horizontal_movement():
 
 #animations
 func player_animations():
-	#on left (add is_action_just_released so you continue running after jumping)
-	if Input.is_action_pressed("ui_left") || Input.is_action_just_released("ui_jump"):
-		$AnimatedSprite2D.flip_h = true
+	if (Input.is_action_pressed("ui_left") and is_on_floor()) or (Input.is_action_pressed("ui_right") and is_on_floor()):
 		$AnimatedSprite2D.play("run")
+	
+	
+	#on left (add is_action_just_released so you continue running after jumping)
+	if Input.is_action_pressed("ui_left"):
+		$AnimatedSprite2D.flip_h = true
+
 
 	#on right (add is_action_just_released so you continue running after jumping)
-	if Input.is_action_pressed("ui_right") || Input.is_action_just_released("ui_jump"):
+	if Input.is_action_pressed("ui_right"):
 		$AnimatedSprite2D.flip_h = false
-		$AnimatedSprite2D.play("run")
-	if !Input.is_anything_pressed():
+
+		
+	if (!Input.is_action_pressed("ui_left") and is_on_floor()) and (!Input.is_action_pressed("ui_right") and is_on_floor()):
 		$AnimatedSprite2D.play("idle")
 
 func _input(event):
