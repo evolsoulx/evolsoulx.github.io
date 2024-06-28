@@ -87,15 +87,14 @@
                 localStorage.setItem(`gif-${index}`, gifUrl);
             };
 
-    // Fetch a random GIF based on a search term from Tenor
-    const fetchRandomGif = async (searchTerm) => {
-        const apiKey = 'AIzaSyCQLL83UeMACRIY9TKUt3SPzPwJwkm0fpQ'; // Replace with your Tenor API key
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-        const apiUrl = `https://api.tenor.com/v1/random?q=${searchTerm}&key=${apiKey}&limit=1`;
-        const response = await fetch(proxyUrl + apiUrl);
-        const data = await response.json();
-        return data.results[0].media[0].gif.url;
-    };
+            // Fetch a random GIF based on a search term from Tenor
+            const fetchRandomGif = async (searchTerm) => {
+                const apiKey = 'AIzaSyCQLL83UeMACRIY9TKUt3SPzPwJwkm0fpQ'; // Replace with your Tenor API key
+                const response = await fetch(`https://api.tenor.com/v1/random?q=${searchTerm}&key=${apiKey}&limit=1`);
+                const data = await response.json();
+                return data.results[0].media[0].gif.url;
+            };
+
             // Update a specific square with a GIF
             const updateSquare = async (index, searchTerm) => {
                 const square = document.querySelector(`div[data-index="${index}"]`);
