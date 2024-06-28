@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Unlock Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <button id="startButton" onclick="startGame()" class="start-button">Start Game</button>
+        <div id="timerDisplay" class="timer-display">Time: 00:00</div>
+        <div class="lock-display" style="display: none;">
+            <select id="tumbler1" onchange="updateWord()">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="R">R</option>
+            </select>
+            <select id="tumbler2" onchange="updateWord()">
+                <option value="I">I</option>
+                <option value="E">E</option>
+                <option value="R">R</option>
+            </select>
+            <select id="tumbler3" onchange="updateWord()">
+                <option value="W">W</option>
+                <option value="A">A</option>
+                <option value="V">V</option>
+                <option value="L">L</option>
+            </select>
+            <select id="tumbler4" onchange="updateWord()">
+                <option value="S">S</option>
+                <option value="Y">Y</option>
+                <option value="R">R</option>
+            </select>
+        </div>
+        <button onclick="submitWord()" class="submit-btn" style="display: none;">Unlock</button>
+        <div id="scoreDisplay" class="score-display">Score: 1000</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

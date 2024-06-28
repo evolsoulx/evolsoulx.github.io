@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer Overlay</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+        .grid div {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .grid div.locked {
+            background-color: #fffae6;
+        }
+        .grid div img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Countdown Timer Overlay</h1>
+    <div class="grid" id="gif-grid">
+        <!-- GIF placeholders -->
+        <div data-index="10"></div>
+        <div data-index="9"></div>
+        <div data-index="8"></div>
+        <div data-index="7"></div>
+        <div data-index="6"></div>
+        <div data-index="5"></div>
+        <div data-index="4"></div>
+        <div data-index="3"></div>
+        <div data-index="2"></div>
+        <div data-index="1"></div>
+        <div data-index="coming-soon">COMING SOON</div>
+        <div data-index="done">LFG</div>
+    </div>
+    <button id="randomize">Randomize</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gifGrid = document.getElementById('gif-grid');
+            const randomizeButton = document.getElementById('randomize');
+
+            // Load saved GIFs from local storage
+            const loadSavedGifs = () => {
+                for (let i = 10; i > 0; i--) {
+                    const savedGif = localStorage.getItem(`gif-${i}`);
+                    if (savedGif) {
+                        const square = document.querySelector(`div[data-index="${i}"]`);
+                        square.innerHTML = `<img src="${savedGif}" alt="GIF">`;
+                    }
+                }
+                const comingSoonGif = localStorage.getItem('gif-coming-soon');
+                if (comingSoonGif) {
+                    const square = document.querySelector('div[data-index="coming-soon"]');
+                    square.innerHTML = `<img src="${comingSoonGif}" alt="COMING SOON">`;
+                }
+                const doneGif = localStorage.getItem('gif-done');
+                if (doneGif) {
+                    const square = document.querySelector('div[data-index="done"]');
+                    square.innerHTML = `<img src="${doneGif}" alt="LFG">`;
+                }
+            };
+
+            // Save GIF to local storage
+            const saveGif = (index, gifUrl) => {
+                localStorage.setItem(`gif-${index}`, gifUrl);
+            };
+
+    // Fetch a random GIF based on a search term from Tenor
+    const fetchRandomGif = async (searchTerm) => {
+        const apiKey = 'AIzaSyCQLL83UeMACRIY9TKUt3SPzPwJwkm0fpQ'; // Replace with your Tenor API key
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const apiUrl = `https://api.tenor.com/v1/random?q=${searchTerm}&key=${apiKey}&limit=1`;
+        const response = await fetch(proxyUrl + apiUrl);
+        const data = await response.json();
+        return data.results[0].media[0].gif.url;
+    };
+            // Update a specific square with a GIF
+            const updateSquare = async (index, searchTerm) => {
+                const square = document.querySelector(`div[data-index="${index}"]`);
+                const gifUrl = await fetchRandomGif(searchTerm);
+                square.innerHTML = `<img src="${gifUrl}" alt="GIF">`;
+                saveGif(index, gifUrl);
+            };
+
+            // Randomize all squares
+            randomizeButton.addEventListener('click', async () => {
+                for (let i = 10; i > 0; i--) {
+                    if (!document.querySelector(`div[data-index="${i}"]`).classList.contains('locked')) {
+                        await updateSquare(i, `${i} minutes left`);
+                    }
+                }
+                if (!document.querySelector('div[data-index="coming-soon"]').classList.contains('locked')) {
+                    await updateSquare('coming-soon', 'COMING SOON');
+                }
+                if (!document.querySelector('div[data-index="done"]').classList.contains('locked')) {
+                    await updateSquare('done', 'LFG');
+                }
+            });
+
+            // Lock/Unlock functionality
+            gifGrid.addEventListener('click', (e) => {
+                const square = e.target.closest('div');
+                if (square) {
+                    square.classList.toggle('locked');
+                    if (square.classList.contains('locked')) {
+                        const gifUrl = square.querySelector('img')?.src;
+                        if (gifUrl) {
+                            localStorage.setItem(`gif-${square.dataset.index}`, gifUrl);
+                        }
+                    } else {
+                        localStorage.removeItem(`gif-${square.dataset.index}`);
+                    }
+                }
+            });
+
+            loadSavedGifs();
+        });
+    </script>
+</body>
+</html>
