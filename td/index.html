@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .gif-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .gif-container img {
+            width: 100px;
+            height: auto;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button onclick="playSoundAndAnimate('crashl.wav', 'gif1', 'crashl.gif', 'crashlstatic.gif')">Play Sound 1</button>
+        <button onclick="playSoundAndAnimate('crashr.wav', 'gif2', 'crashr.gif', 'crashrstatic.gif')">Play Sound 2</button>
+        <button onclick="playSoundAndAnimate('kick.wav', 'gif3', 'kick.gif', 'kickstatic.gif')">Play Sound 3</button>
+        <button onclick="playSoundAndAnimate('snare.wav', 'gif4', 'snare.gif', 'snarestatic.gif')">Play Sound 4</button>
+        <button onclick="playSoundAndAnimate('tom.wav', 'gif5', 'tom.gif', 'tomstatic.gif')">Play Sound 5</button>
+    </div>
+
+    <div class="gif-container">
+        <img id="gif1" src="images/crashlstatic.gif" alt="GIF 1">
+        <img id="gif2" src="images/crashrstatic.gif" alt="GIF 2">
+        <img id="gif3" src="images/kickstatic.gif" alt="GIF 3">
+        <img id="gif4" src="images/snarestatic.gif" alt="GIF 4">
+        <img id="gif5" src="images/tomstatic.gif" alt="GIF 5">
+    </div>
+
+    <script>
+        function playSoundAndAnimate(soundFileName, gifId, animatedGif, staticGif) {
+            var audio = new Audio(`sounds/${soundFileName}`);
+            audio.play();
+            var gif = document.getElementById(gifId);
+            gif.src = `images/${animatedGif}`;
+            setTimeout(() => {gif.src = `images/${staticGif}`;}, 500); 
+        }
+    </script>
+</body>
+</html>
