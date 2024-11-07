@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radius API Test Page</title>
+</head>
+<body>
+    <h1>Radius API Test Page</h1>
+    <label for="apiKeyInput">API Key:</label>
+    <input type="text" id="apiKeyInput" placeholder="Enter your API Key here">
+    <br><br>
+    <button onclick="listAllModules()">List All Modules</button>
+    <button onclick="createSampleEntity()">Create Sample Entity</button>
+    <button onclick="updateSampleEntity()">Update Sample Entity</button>
+    <button onclick="deleteSampleEntity()">Delete Sample Entity</button>
+
+    <div id="output" style="margin-top: 20px;"></div>
+
+    <script>
+        let API_KEY = '';
+        const API_BASE_URL = 'https://useast.radiusbycampusmgmt.com/crm/webservice'; // Replace <host> with appropriate host
+
+        document.getElementById('apiKeyInput').addEventListener('input', function(event) {
+            API_KEY = event.target.value;
+        });
+
+        function makeRequest(method, url, data = null) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open(method, url, true);
+                xhr.setRequestHeader('Authorization', `Bearer ${API_KEY}`);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve(JSON.parse(xhr.responseText));
+                        } else {
+                            reject(JSON.parse(xhr.responseText));
+                        }
+                    }
+                };
+
+                if (data) {
+                    xhr.send(JSON.stringify(data));
+                } else {
+                    xhr.send();
+                }
+            });
+        }
+
+        function listAllModules() {
+            makeRequest('GET', `${API_BASE_URL}/modules`)
+                .then(response => {
+                    displayOutput('Modules List: ' + JSON.stringify(response));
+                })
+                .catch(error => {
+                    displayOutput('Error fetching modules: ' + JSON.stringify(error));
+                });
+        }
+
+        function createSampleEntity() {
+            const createFields = {
+                'First Name': 'John',
+                'Last Name': 'Doe'
+            };
+            createEntity('Contacts', createFields);
+        }
+
+        function createEntity(moduleName, createFields) {
+            const data = {
+                createFields: createFields,
+                returnFields: ['Entity ID', 'First Name', 'Last Name']
+            };
+
+            makeRequest('POST', `${API_BASE_URL}/modules/${moduleName}`, data)
+                .then(response => {
+                    displayOutput('Entity Created: ' + JSON.stringify(response));
+                })
+                .catch(error => {
+                    displayOutput('Error creating entity: ' + JSON.stringify(error));
+                });
+        }
+
+        function updateSampleEntity() {
+            const updateFields = {
+                'First Name': 'Jane'
+            };
+            updateEntity('Contacts', '2000000220005', updateFields);
+        }
+
+        function updateEntity(moduleName, entityId, updateFields) {
+            const data = {
+                createFields: updateFields,
+                returnFields: ['Entity ID', 'First Name', 'Last Name']
+            };
+
+            makeRequest('PUT', `${API_BASE_URL}/modules/${moduleName}/${entityId}`, data)
+                .then(response => {
+                    displayOutput('Entity Updated: ' + JSON.stringify(response));
+                })
+                .catch(error => {
+                    displayOutput('Error updating entity: ' + JSON.stringify(error));
+                });
+        }
+
+        function deleteSampleEntity() {
+            deleteEntity('Contacts', '2000000220005');
+        }
+
+        function deleteEntity(moduleName, entityId) {
+            makeRequest('DELETE', `${API_BASE_URL}/modules/${moduleName}/${entityId}`)
+                .then(response => {
+                    displayOutput('Entity Deleted: ' + JSON.stringify(response));
+                })
+                .catch(error => {
+                    displayOutput('Error deleting entity: ' + JSON.stringify(error));
+                });
+        }
+
+        function displayOutput(message) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<pre>${message}</pre>`;
+        }
+    </script>
+</body>
+</html>
