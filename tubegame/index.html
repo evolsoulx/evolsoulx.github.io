@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Search Query Game</title>
+    <script>
+        async function searchYouTube() {
+            const videoId = new URLSearchParams(window.location.search).get('video');
+            const searchQuery = document.getElementById('searchInput').value;
+            const apiUrl = `https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(searchQuery)}&part=snippet&maxResults=50&type=video&key=AIzaSyDkIrTU58r5A0Ddb0NxvnFW8oBG6PSeTR0`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                const data = await response.json();
+                const results = data.items || [];
+
+                // Debug: Display raw search results and highlight the goal video
+                const debugDiv = document.getElementById('debug');
+                debugDiv.innerHTML = results.map((item, index) => `
+                    <div style="${item.id.videoId === videoId ? 'background: #dff0d8; border: 2px solid #3c763d;' : ''}">
+                        <strong>Result ${index + 1}:</strong><br>
+                        Title: ${item.snippet.title}<br>
+                        Video ID: ${item.id.videoId}<br>
+                    </div>
+                `).join('<hr>');
+
+                const videoPosition = results.findIndex(item => item.id.videoId === videoId);
+                const resultText = videoPosition !== -1 ? 
+                    `Your video is at position ${videoPosition + 1}.` :
+                    "Your video does not appear in the search results.";
+
+                document.getElementById('results').innerText = resultText;
+                storeSearchQuery(searchQuery, videoPosition !== -1 ? videoPosition + 1 : null);
+
+                if (videoPosition === 0) {
+                    alert("Congratulations! Your query returned the video as the top result!");
+                }
+            } catch (error) {
+                console.error("Error searching YouTube:", error);
+                document.getElementById('results').innerText = "An error occurred while searching YouTube.";
+            }
+        }
+
+        function storeSearchQuery(query, position) {
+            const storedQueries = JSON.parse(localStorage.getItem('queries')) || [];
+            storedQueries.unshift({ query, position, timestamp: new Date().toISOString() });
+            localStorage.setItem('queries', JSON.stringify(storedQueries));
+            displaySearchHistory();
+        }
+
+        function displaySearchHistory() {
+            const storedQueries = JSON.parse(localStorage.getItem('queries')) || [];
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = storedQueries.map(q => `
+                <div>
+                    <strong>Query:</strong> ${q.query} <br>
+                    <strong>Position:</strong> ${q.position !== null ? q.position : 'Not found'} <br>
+                    <strong>Timestamp:</strong> ${q.timestamp}
+                </div>
+            `).join('<hr>');
+        }
+
+        window.onload = function() {
+            displaySearchHistory();
+            const videoId = new URLSearchParams(window.location.search).get('video');
+            if (videoId) {
+                document.getElementById('videoDisplay').src = `https://www.youtube.com/embed/${videoId}`;
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>YouTube Search Query Game</h1>
+    <p>Load a video using the URL parameter "video" with the YouTube video ID.</p>
+    <p>Example: <code>?video=abcd1234</code></p>
+
+    <div>
+        <label for="searchInput">Enter your search query:</label>
+        <input type="text" id="searchInput">
+        <button onclick="searchYouTube()">Search</button>
+    </div>
+
+    <div id="results"></div>
+
+    <h2>Video Display</h2>
+    <iframe id="videoDisplay" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+
+    <h2>Search History</h2>
+    <div id="history"></div>
+
+    <h2>Debug: Search Results</h2>
+    <div id="debug" style="background: #f9f9f9; padding: 10px; border: 1px solid #ddd; margin-top: 10px; max-height: 300px; overflow-y: auto;"></div>
+</body>
+</html>
