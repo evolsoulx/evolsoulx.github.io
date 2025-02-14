@@ -1,214 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idle Game: Color Droplets</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
-        .controls {
-            margin-bottom: 20px;
-        }
-        .beaker {
-            position: relative;
-            width: 200px;
-            height: 300px;
-            background-color: #ffffff;
-            border: 2px solid #333;
-            border-radius: 0 0 50px 50px;
-            overflow: hidden;
-        }
-        .liquid {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 0%;
-            background-color: #ffffff;
-            transition: background-color 1s, height 1s;
-        }
-        .droplet {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            animation: drop 2s linear;
-        }
-        @keyframes drop {
-            0% {
-                top: -30px;
-                opacity: 1;
-            }
-            100% {
-                top: 270px;
-                opacity: 1;
-            }
-        }
-        .log {
-            margin-top: 20px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            color: #333;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Todd Barriage Album Email Generator</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #1d2b64, #f8cdda);
+      color: #fff;
+    }
+    /* Container */
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    /* Form Styles */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    input::placeholder {
+      color: #999;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #ff4757;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #e84118;
+    }
+    /* Output Styles */
+    .output label {
+      font-weight: bold;
+    }
+    textarea.output-area {
+      height: 300px;
+      resize: none;
+      background: #333;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <div class="controls">
-        <label for="drop1ColorPicker">Select Drop 1 Color: </label>
-        <input type="color" id="drop1ColorPicker" value="#00bcd4">
-        <label>
-            <input type="checkbox" id="toggleDrop1" checked> Enable Drop 1
-        </label>
-        <br>
-        <label for="drop2ColorPicker">Select Drop 2 Color: </label>
-        <input type="color" id="drop2ColorPicker" value="#ff4081">
-        <label>
-            <input type="checkbox" id="toggleDrop2" checked> Enable Drop 2
-        </label>
+  <div class="container">
+    <h1>Todd Barriage Album Email Generator</h1>
+    <form id="emailForm">
+      <label for="yourName">Your Name</label>
+      <input type="text" id="yourName" placeholder="Enter your name" required />
+
+      <label for="city">City</label>
+      <input type="text" id="city" placeholder="Enter your city" required />
+
+      <label for="radioStation">Radio Station (Optional)</label>
+      <input type="text" id="radioStation" placeholder="Enter radio station name" />
+
+      <button type="submit">Generate Email</button>
+    </form>
+    <div class="output">
+      <label for="generatedEmail">Generated Email</label>
+      <textarea id="generatedEmail" class="output-area" readonly></textarea>
     </div>
-    <div class="beaker" id="beaker">
-        <div class="liquid" id="liquid"></div>
-    </div>
-    <div class="log" id="log"></div>
-    <script>
-        const liquid = document.getElementById('liquid');
-        const beaker = document.getElementById('beaker');
-        const drop1ColorPicker = document.getElementById('drop1ColorPicker');
-        const drop2ColorPicker = document.getElementById('drop2ColorPicker');
-        const toggleDrop1 = document.getElementById('toggleDrop1');
-        const toggleDrop2 = document.getElementById('toggleDrop2');
-        const log = document.getElementById('log');
+  </div>
 
-        let liquidVolume = 0; // Initial volume in ml (no liquid initially)
-        const maxVolume = 10; // Max volume in ml before resetting
-        const dropletVolume = 0.5; // Volume of each droplet in ml
-        let fullBeakers = 0;
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function (e) {
+      e.preventDefault();
 
-        // Function to blend two colors (RGB)
-        function blendColors(color1, color2, ratio) {
-            const r = Math.round((color1[0] * ratio) + (color2[0] * (1 - ratio)));
-            const g = Math.round((color1[1] * ratio) + (color2[1] * (1 - ratio)));
-            const b = Math.round((color1[2] * ratio) + (color2[2] * (1 - ratio)));
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+      // Grab user inputs
+      var name = document.getElementById('yourName').value.trim();
+      var city = document.getElementById('city').value.trim();
+      var station = document.getElementById('radioStation').value.trim();
 
-        // Function to convert hex color to RGB array
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return [r, g, b];
-        }
+      // Helper function to pick a random element from an array
+      function getRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
 
-        // Initial colors
-        let liquidColor = [255, 255, 255]; // Start with no color (white)
+      // Subject alternatives
+      var subjects = [
+        "Subject: Todd Barriage's New Album is Out NOW!",
+        "Subject: Experience Todd Barriage's Game-Changing Album Release!",
+        "Subject: Todd Barriage Drops a Mind-Blowing New Album Today!",
+        "Subject: Unleash the Sound: Todd Barriage's Album is Here!",
+        "Subject: Get Ready for Todd Barriage's Epic New Album Release!",
+        "Subject: Fresh Drop: Todd Barriage's Album is Redefining Music!",
+        "Subject: Breaking: Todd Barriage's Latest Album Just Went Live!",
+        "Subject: Hear it First: Todd Barriage's Album is a Must-Listen!",
+        "Subject: The Wait is Over: Todd Barriage's New Album is Here!",
+        "Subject: Tune In: Todd Barriage's New Album Will Blow Your Mind!"
+      ];
 
-        // Create droplets from Drop 1
-        function createDroplet1() {
-            if (!toggleDrop1.checked) return;
+      // Greetings based on whether a radio station was provided
+      var greetings = station ? [
+        "Dear " + station + " Team,",
+        "Hello " + station + " Crew,",
+        "Greetings " + station + " Folks,",
+        "Hi there, " + station + " Team,",
+        "Dear " + station + " Family,",
+        "Hello " + station + " Team,",
+        "Hey " + station + "!",
+        "Dear team at " + station + ",",
+        "What's up, " + station + " crew?",
+        "Greetings to everyone at " + station + "!"
+      ] : [
+        "Dear Radio Team,",
+        "Hello Radio Crew,",
+        "Greetings Music Enthusiasts,",
+        "Hi there, Radio Family,",
+        "Dear Team,",
+        "Hello Team,",
+        "Hey there!",
+        "Dear Music Curators,",
+        "Greetings Radio Folks,",
+        "What's up, Radio Team?"
+      ];
 
-            const droplet = document.createElement('div');
-            droplet.classList.add('droplet');
-            droplet.style.backgroundColor = drop1ColorPicker.value;
-            droplet.style.left = `25%`;
-            beaker.appendChild(droplet);
+      // Introduction paragraph alternatives
+      var intros = [
+        `My name is ${name} from ${city}, and I'm excited to share some amazing news with you.`,
+        `This is ${name} all the way from ${city}, and I've got a hot tip for you.`,
+        `Hello from ${city}! I'm ${name}, and I'm reaching out with some electrifying news.`,
+        `I'm ${name} based in ${city}, and I couldn't wait to tell you about something special.`,
+        `Greetings from ${city}! ${name} here, ready to drop some exciting info your way.`,
+        `Hi, I'm ${name} from ${city}, and I have a story that will get you pumped.`,
+        `${name} here from ${city}—I've got news that will light up your day.`,
+        `Coming to you from ${city}, I'm ${name} with some seriously cool news.`,
+        `I'm ${name} in ${city}, and I've been waiting to share this epic update with you.`,
+        `Hello, ${name} from ${city} here, and I have some news that's too good to keep quiet.`
+      ];
 
-            // When droplet animation ends (hits the liquid)
-            droplet.addEventListener('animationend', () => {
-                // Blend droplet color with liquid color
-                const dropletColor = hexToRgb(drop1ColorPicker.value);
-                liquidColor = [
-                    Math.round((liquidColor[0] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[0] * (dropletVolume / (liquidVolume + dropletVolume)))),
-                    Math.round((liquidColor[1] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[1] * (dropletVolume / (liquidVolume + dropletVolume)))),
-                    Math.round((liquidColor[2] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[2] * (dropletVolume / (liquidVolume + dropletVolume))))
-                ];
+      // Album description alternatives with detailed info
+      var albumDescs = [
+        "Todd Barriage just dropped his new album, 'ALL THE RIGHT SCARS,' and it's absolutely fucking sick. This is his first full-length album in 11 years, aiming to break down the stigma around mental illness, intrusive thoughts, and suicidal ideation. Dive into tracks like 'I Think I Used To Matter' and 'Death' on Bandcamp or your favorite streaming service. For more info, visit https://www.borlandstud.io/about, and don’t miss the exclusive merch at https://toddsfaceonashirt.com/.",
+        "Check out Todd Barriage's latest drop, 'ALL THE RIGHT SCARS.' After 11 years, this full-length album confronts mental health stigma with raw honesty—featuring tracks from 'i don't want to be here anymore' to 'This Can't Be Healthy (Stay Away).' Stream it now and grab some merch at https://toddsfaceonashirt.com/.",
+        "Today, Todd Barriage releases 'ALL THE RIGHT SCARS'—a full-length album that’s as raw as it is real. Tackling topics from intrusive thoughts to suicidal ideation, the album boasts standout tracks like 'Come Up Short' and 'Joey Sturgis asked me to write a Saosin song.' Listen on your favorite platform and check out exclusive merch at https://toddsfaceonashirt.com/.",
+        "Experience Todd Barriage's new album, 'ALL THE RIGHT SCARS.' His first full-length record in 11 years breaks down mental health stigma with tracks ranging from 'Green-Haired Canadian Girls' to 'Ruin Everything.' It's available on Bandcamp and other streaming services—plus, exclusive merch awaits at https://toddsfaceonashirt.com/.",
+        "Don't miss Todd Barriage's latest album, 'ALL THE RIGHT SCARS.' Released today, this 11-year milestone album delves into mental health with brutal honesty. From 'Tactless, Tasteless, Obvious' to 'Depression is a Hell of a Drug,' it's a must-listen. Stream now and check out merch at https://toddsfaceonashirt.com/.",
+        "Todd Barriage's new album, 'ALL THE RIGHT SCARS,' is here! After 11 years, he returns with a full-length record that explores mental health and healing through music, featuring tracks like 'Your Love is Sick (The Pee Song)' and 'Misdiagnosed.' Available on all streaming platforms, with merch at https://toddsfaceonashirt.com/.",
+        "Introducing 'ALL THE RIGHT SCARS' by Todd Barriage—a full-length album released after 11 years that confronts mental health challenges head-on. With a diverse tracklist including 'I Think I Used To Matter' and 'Tactless, Tasteless, Obvious,' this album is a powerful tool for healing. Listen now and explore exclusive merch at https://toddsfaceonashirt.com/.",
+        "Todd Barriage has just dropped 'ALL THE RIGHT SCARS,' a full-length album after 11 years that's as thought-provoking as it is intense. It challenges mental health stigma and features tracks like 'Death' and 'This Can't Be Healthy (Stay Away).' Catch it on your preferred streaming service and peep the merch at https://toddsfaceonashirt.com/.",
+        "Experience the raw energy of Todd Barriage's new album, 'ALL THE RIGHT SCARS.' His first full-length release in 11 years delves deep into mental health issues with brutal honesty—from 'i don't want to be here anymore' to 'Depression is a Hell of a Drug.' Stream it now and check out the exclusive merch at https://toddsfaceonashirt.com/.",
+        "Todd Barriage's 'ALL THE RIGHT SCARS' is out today! This full-length album, his first in 11 years, offers an open conversation on mental health with tracks like 'Joey Sturgis asked me to write a Saosin song' and 'Green-Haired Canadian Girls.' For more details, visit https://www.borlandstud.io/about, then stream the album and score some merch at https://toddsfaceonashirt.com/."
+      ];
 
-                // Update the liquid color in the beaker
-                liquid.style.backgroundColor = `rgb(${liquidColor[0]}, ${liquidColor[1]}, ${liquidColor[2]})`;
+      // Compliment paragraph alternatives
+      var compliments = [
+        "I know your station has an impeccable taste in music, and this album is a flawless match.",
+        "Your station's reputation for showcasing groundbreaking tunes makes this album a perfect fit.",
+        "With your stellar track record, I believe this album will resonate perfectly with your audience.",
+        "Given your knack for spotlighting the best in music, this album is destined for your lineup.",
+        "I'm confident that your station, known for its cutting-edge selections, will dig this album.",
+        "Your station has always been ahead of the curve, and this album is right up your alley.",
+        "Recognizing your station's commitment to quality music, this album seems like a natural choice.",
+        "With your dynamic approach to music, this album will undoubtedly strike a chord with your listeners.",
+        "Your station's unique flair for music curation makes this album a must-feature.",
+        "Knowing your love for innovative sounds, I felt compelled to share this album with you."
+      ];
 
-                // Update liquid volume
-                liquidVolume += dropletVolume;
-                const newLiquidHeight = (liquidVolume / maxVolume) * 100;
-                liquid.style.height = `${newLiquidHeight}%`;
+      // Call-to-action paragraph alternatives
+      var callsToAction = [
+        "I'd be thrilled if you could give it a listen and consider featuring it on your airwaves.",
+        "It would be amazing if you could check it out and possibly add it to your rotation.",
+        "I'm eager for you to hear it and hope you might feature it on your station.",
+        "I invite you to take a listen and consider including it in your playlist.",
+        "It would mean the world if you could sample the album and give it some airplay.",
+        "I trust you'll appreciate its vibe—please consider playing it on your station.",
+        "I hope you'll tune in to the album and perhaps share it with your audience.",
+        "Your feedback would be incredible, and I hope you'll consider featuring the album.",
+        "A listen from you would be amazing; I'm confident it deserves a spot on your airwaves.",
+        "I would truly appreciate it if you could give it a shot and feature it in your lineup."
+      ];
 
-                // Check if the beaker is full
-                if (liquidVolume >= maxVolume) {
-                    fullBeakers++;
-                    addLog(`Beaker is full! Total full beakers: ${fullBeakers}`);
-                    resetBeaker();
-                }
+      // Closing paragraph alternatives
+      var closings = [
+        "Thanks for your time, and keep on rocking!",
+        "Appreciate your consideration and keep the tunes alive!",
+        "Thanks a ton, and may your station always be rocking!",
+        "Cheers for reading, and keep the good vibes flowing!",
+        "Grateful for your time—stay awesome!",
+        "Many thanks, and here's to more epic tunes!",
+        "Thanks for listening, and keep the music spirit strong!",
+        "I appreciate your time—rock on!",
+        "Thanks for considering, and may your airwaves stay lit!",
+        "Cheers for your time and keep on jamming!"
+      ];
 
-                // Remove droplet after it hits the liquid
-                droplet.remove();
-            });
-        }
+      // Assemble the email using random selections from each section
+      var emailContent = "";
+      emailContent += getRandom(subjects) + "\n\n";
+      emailContent += getRandom(greetings) + "\n\n";
+      emailContent += getRandom(intros) + "\n\n";
+      emailContent += getRandom(albumDescs) + "\n\n";
+      emailContent += getRandom(compliments) + "\n\n";
+      emailContent += getRandom(callsToAction) + "\n\n";
+      emailContent += getRandom(closings) + "\n";
+      emailContent += name;
 
-        // Create droplets from Drop 2
-        function createDroplet2() {
-            if (!toggleDrop2.checked) return;
-
-            const droplet = document.createElement('div');
-            droplet.classList.add('droplet');
-            droplet.style.backgroundColor = drop2ColorPicker.value;
-            droplet.style.left = `75%`;
-            beaker.appendChild(droplet);
-
-            // When droplet animation ends (hits the liquid)
-            droplet.addEventListener('animationend', () => {
-                // Blend droplet color with liquid color
-                const dropletColor = hexToRgb(drop2ColorPicker.value);
-                liquidColor = [
-                    Math.round((liquidColor[0] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[0] * (dropletVolume / (liquidVolume + dropletVolume)))),
-                    Math.round((liquidColor[1] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[1] * (dropletVolume / (liquidVolume + dropletVolume)))),
-                    Math.round((liquidColor[2] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[2] * (dropletVolume / (liquidVolume + dropletVolume))))
-                ];
-
-                // Update the liquid color in the beaker
-                liquid.style.backgroundColor = `rgb(${liquidColor[0]}, ${liquidColor[1]}, ${liquidColor[2]})`;
-
-                // Update liquid volume
-                liquidVolume += dropletVolume;
-                const newLiquidHeight = (liquidVolume / maxVolume) * 100;
-                liquid.style.height = `${newLiquidHeight}%`;
-
-                // Check if the beaker is full
-                if (liquidVolume >= maxVolume) {
-                    fullBeakers++;
-                    addLog(`Beaker is full! Total full beakers: ${fullBeakers}`);
-                    resetBeaker();
-                }
-
-                // Remove droplet after it hits the liquid
-                droplet.remove();
-            });
-        }
-
-        // Reset the beaker for the next cycle
-        function resetBeaker() {
-            liquidVolume = 0; // Reset to no liquid
-            liquid.style.height = `${(liquidVolume / maxVolume) * 100}%`;
-            liquid.style.backgroundColor = '#ffffff'; // Reset to initial color (white)
-            liquidColor = [255, 255, 255];
-        }
-
-        // Add log message
-        function addLog(message) {
-            const logEntry = document.createElement('div');
-            logEntry.textContent = message;
-            log.appendChild(logEntry);
-        }
-
-        // Set interval to create droplets
-        setInterval(createDroplet1, 4000); // Drop 1 every 4 seconds
-        setInterval(createDroplet2, 6000); // Drop 2 every 6 seconds
-    </script>
+      // Output the generated email to the textarea
+      document.getElementById('generatedEmail').value = emailContent;
+    });
+  </script>
 </body>
 </html>
