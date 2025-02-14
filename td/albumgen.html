@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Game: Color Droplets</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .beaker {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            background-color: #ffffff;
+            border: 2px solid #333;
+            border-radius: 0 0 50px 50px;
+            overflow: hidden;
+        }
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background-color: #ffffff;
+            transition: background-color 1s, height 1s;
+        }
+        .droplet {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            animation: drop 2s linear;
+        }
+        @keyframes drop {
+            0% {
+                top: -30px;
+                opacity: 1;
+            }
+            100% {
+                top: 270px;
+                opacity: 1;
+            }
+        }
+        .log {
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="drop1ColorPicker">Select Drop 1 Color: </label>
+        <input type="color" id="drop1ColorPicker" value="#00bcd4">
+        <label>
+            <input type="checkbox" id="toggleDrop1" checked> Enable Drop 1
+        </label>
+        <br>
+        <label for="drop2ColorPicker">Select Drop 2 Color: </label>
+        <input type="color" id="drop2ColorPicker" value="#ff4081">
+        <label>
+            <input type="checkbox" id="toggleDrop2" checked> Enable Drop 2
+        </label>
+    </div>
+    <div class="beaker" id="beaker">
+        <div class="liquid" id="liquid"></div>
+    </div>
+    <div class="log" id="log"></div>
+    <script>
+        const liquid = document.getElementById('liquid');
+        const beaker = document.getElementById('beaker');
+        const drop1ColorPicker = document.getElementById('drop1ColorPicker');
+        const drop2ColorPicker = document.getElementById('drop2ColorPicker');
+        const toggleDrop1 = document.getElementById('toggleDrop1');
+        const toggleDrop2 = document.getElementById('toggleDrop2');
+        const log = document.getElementById('log');
+
+        let liquidVolume = 0; // Initial volume in ml (no liquid initially)
+        const maxVolume = 10; // Max volume in ml before resetting
+        const dropletVolume = 0.5; // Volume of each droplet in ml
+        let fullBeakers = 0;
+
+        // Function to blend two colors (RGB)
+        function blendColors(color1, color2, ratio) {
+            const r = Math.round((color1[0] * ratio) + (color2[0] * (1 - ratio)));
+            const g = Math.round((color1[1] * ratio) + (color2[1] * (1 - ratio)));
+            const b = Math.round((color1[2] * ratio) + (color2[2] * (1 - ratio)));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Function to convert hex color to RGB array
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return [r, g, b];
+        }
+
+        // Initial colors
+        let liquidColor = [255, 255, 255]; // Start with no color (white)
+
+        // Create droplets from Drop 1
+        function createDroplet1() {
+            if (!toggleDrop1.checked) return;
+
+            const droplet = document.createElement('div');
+            droplet.classList.add('droplet');
+            droplet.style.backgroundColor = drop1ColorPicker.value;
+            droplet.style.left = `25%`;
+            beaker.appendChild(droplet);
+
+            // When droplet animation ends (hits the liquid)
+            droplet.addEventListener('animationend', () => {
+                // Blend droplet color with liquid color
+                const dropletColor = hexToRgb(drop1ColorPicker.value);
+                liquidColor = [
+                    Math.round((liquidColor[0] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[0] * (dropletVolume / (liquidVolume + dropletVolume)))),
+                    Math.round((liquidColor[1] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[1] * (dropletVolume / (liquidVolume + dropletVolume)))),
+                    Math.round((liquidColor[2] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[2] * (dropletVolume / (liquidVolume + dropletVolume))))
+                ];
+
+                // Update the liquid color in the beaker
+                liquid.style.backgroundColor = `rgb(${liquidColor[0]}, ${liquidColor[1]}, ${liquidColor[2]})`;
+
+                // Update liquid volume
+                liquidVolume += dropletVolume;
+                const newLiquidHeight = (liquidVolume / maxVolume) * 100;
+                liquid.style.height = `${newLiquidHeight}%`;
+
+                // Check if the beaker is full
+                if (liquidVolume >= maxVolume) {
+                    fullBeakers++;
+                    addLog(`Beaker is full! Total full beakers: ${fullBeakers}`);
+                    resetBeaker();
+                }
+
+                // Remove droplet after it hits the liquid
+                droplet.remove();
+            });
+        }
+
+        // Create droplets from Drop 2
+        function createDroplet2() {
+            if (!toggleDrop2.checked) return;
+
+            const droplet = document.createElement('div');
+            droplet.classList.add('droplet');
+            droplet.style.backgroundColor = drop2ColorPicker.value;
+            droplet.style.left = `75%`;
+            beaker.appendChild(droplet);
+
+            // When droplet animation ends (hits the liquid)
+            droplet.addEventListener('animationend', () => {
+                // Blend droplet color with liquid color
+                const dropletColor = hexToRgb(drop2ColorPicker.value);
+                liquidColor = [
+                    Math.round((liquidColor[0] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[0] * (dropletVolume / (liquidVolume + dropletVolume)))),
+                    Math.round((liquidColor[1] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[1] * (dropletVolume / (liquidVolume + dropletVolume)))),
+                    Math.round((liquidColor[2] * (liquidVolume / (liquidVolume + dropletVolume)) + dropletColor[2] * (dropletVolume / (liquidVolume + dropletVolume))))
+                ];
+
+                // Update the liquid color in the beaker
+                liquid.style.backgroundColor = `rgb(${liquidColor[0]}, ${liquidColor[1]}, ${liquidColor[2]})`;
+
+                // Update liquid volume
+                liquidVolume += dropletVolume;
+                const newLiquidHeight = (liquidVolume / maxVolume) * 100;
+                liquid.style.height = `${newLiquidHeight}%`;
+
+                // Check if the beaker is full
+                if (liquidVolume >= maxVolume) {
+                    fullBeakers++;
+                    addLog(`Beaker is full! Total full beakers: ${fullBeakers}`);
+                    resetBeaker();
+                }
+
+                // Remove droplet after it hits the liquid
+                droplet.remove();
+            });
+        }
+
+        // Reset the beaker for the next cycle
+        function resetBeaker() {
+            liquidVolume = 0; // Reset to no liquid
+            liquid.style.height = `${(liquidVolume / maxVolume) * 100}%`;
+            liquid.style.backgroundColor = '#ffffff'; // Reset to initial color (white)
+            liquidColor = [255, 255, 255];
+        }
+
+        // Add log message
+        function addLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = message;
+            log.appendChild(logEntry);
+        }
+
+        // Set interval to create droplets
+        setInterval(createDroplet1, 4000); // Drop 1 every 4 seconds
+        setInterval(createDroplet2, 6000); // Drop 2 every 6 seconds
+    </script>
+</body>
+</html>
