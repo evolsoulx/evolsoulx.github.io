@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Strum Pattern Generator (Raw MIDI Merge)</title>
+  <style>
+    /* Dark UI styling from before */
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fafafa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    body > * {
+      margin: 20px 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    #settings, #chord-progression {
+      text-align: center;
+    }
+    #grid-container {
+      display: inline-block;
+      margin: 0 auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    #grid-labels {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-gap: 10px;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #ccc;
+    }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(8, 60px);
+      grid-template-rows: repeat(2, 60px);
+      grid-gap: 10px;
+      text-align: center;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #444;
+      background: #2c2c2c;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fafafa;
+      transition: background 0.2s;
+    }
+    .cell:hover {
+      background: #3a3a3a;
+    }
+    .cell.down { background: #3CB371; color: #fff; }
+    .cell.mute { background: #D9534F; color: #fff; }
+    .cell.up   { background: #5BC0DE; color: #fff; }
+    .button-container {
+      text-align: center;
+    }
+    button, label {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #333;
+      color: #fafafa;
+      border: 1px solid #555;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    button:hover,
+    label:hover {
+      background: #444;
+    }
+    #loopContainer {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #fafafa;
+    }
+    input[type="checkbox"] {
+      accent-color: #5BC0DE;
+    }
+  </style>
+</head>
+<body>
+  <h1>Strum Pattern Generator (Raw MIDI Merge)</h1>
+  <div>a project by <a target="_blank" href="https://tomvelle.com:">tom velle</a></div>
+
+  <!-- Global Settings -->
+  <div id="settings">
+    <label>BPM: <input type="number" id="bpm" value="120" min="60" max="240"></label>
+  </div>
+  
+  <!-- Chord Progression Selection (4 measures) -->
+  <div id="chord-progression">
+    <p>Chord Progression (4 measures):</p>
+    <select id="chord1">
+      <option value="D" selected>D</option>
+      <option value="A">A</option>
+      <option value="Bm">Bm</option>
+      <option value="G">G</option>
+      <option value="C">C</option>
+      <option value="E">E</option>
+    </select>
+    <select id="chord2">
+      <option value="D">D</option>
+      <option value="A" selected>A</option>
+      <option value="Bm">Bm</option>
+      <option value="G">G</option>
+      <option value="C">C</option>
+      <option value="E">E</option>
+    </select>
+    <select id="chord3">
+      <option value="D">D</option>
+      <option value="A">A</option>
+      <option value="Bm" selected>Bm</option>
+      <option value="G">G</option>
+      <option value="C">C</option>
+      <option value="E">E</option>
+    </select>
+    <select id="chord4">
+      <option value="D">D</option>
+      <option value="A">A</option>
+      <option value="Bm">Bm</option>
+      <option value="G" selected>G</option>
+      <option value="C">C</option>
+      <option value="E">E</option>
+    </select>
+  </div>
+  
+  <!-- Labeled Grid UI -->
+  <div id="grid-container">
+    <div id="grid-labels">
+      <div>1</div>
+      <div>&amp;</div>
+      <div>2</div>
+      <div>&amp;</div>
+      <div>3</div>
+      <div>&amp;</div>
+      <div>4</div>
+      <div>&amp;</div>
+    </div>
+    <div id="grid">
+      <!-- 16 cells inserted via JS -->
+    </div>
+  </div>
+  
+  <div class="button-container">
+    <button id="generate">Generate MIDI (Download)</button>
+    <button id="play">Play Pattern</button>
+  </div>
+  
+  <div id="loopContainer" style="text-align:center;">
+    <label><input type="checkbox" id="loopCheckbox"> Loop Playback</label>
+  </div>
+  
+  <!-- Tools: FileSaver for download, Tone.js for audio playback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="http://unpkg.com/tone"></script>
+
+  <script>
+    // 1) Basic stroke types & chord shapes
+    const strokeTypes = ['rest','down','mute','up'];
+    const strokeProperties = {
+      'rest': { vel:0,   len:0   },
+      'down': { vel:100, len:120 }, // 16th note = 120 ticks
+      'mute': { vel:40,  len:60  }, // 32nd note = 60 ticks
+      'up':   { vel:60,  len:120 }
+    };
+    const chordShapes = {
+      "C":  [48, 52, 55],
+      "D":  [50, 54, 57],
+      "E":  [52, 56, 59],
+      "F":  [53, 57, 60],
+      "G":  [55, 59, 62],
+      "A":  [57, 61, 64],
+      "Bm": [47, 50, 54]
+    };
+
+    // 2) 4-measure, 16-subdivision pattern defaults to your shorthand D_X_ D_XU DUD_ D_DU
+    let urlParams = new URLSearchParams(window.location.search);
+    let patternParam = urlParams.get('pattern');
+    let defaultPattern = [
+      'rest','rest','rest','rest',
+      'rest','rest','rest','rest',
+      'rest','rest','rest','rest',
+      'rest','rest','rest','rest'
+    ];
+    let pattern = [];
+    if(patternParam) {
+      let arr = patternParam.split(',');
+      for(let i=0; i<16; i++){
+        let s = arr[i] ? arr[i].trim().toLowerCase() : 'rest';
+        pattern.push(strokeTypes.includes(s)? s: 'rest');
+      }
+    } else {
+      pattern = [...defaultPattern];
+    }
+
+    // 3) Basic MIDI timing
+    const ticksPerBeat = 480;
+    const ticksPerMeasure = ticksPerBeat*4; // 1920
+    const subdivisionTicks = ticksPerMeasure/16; // 120
+
+    // 4) Build the grid UI with your pattern
+    const gridContainer = document.getElementById('grid');
+    for(let i=0; i<16; i++){
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      updateCell(cell, pattern[i]);
+      cell.addEventListener('click', function(){
+        let idx = parseInt(cell.dataset.index);
+        let cur = pattern[idx];
+        let next = strokeTypes[(strokeTypes.indexOf(cur)+1) % strokeTypes.length];
+        pattern[idx] = next;
+        updateCell(cell, next);
+      });
+      gridContainer.appendChild(cell);
+    }
+    function updateCell(cell, type) {
+      cell.className='cell';
+      cell.classList.add(type);
+      cell.innerText=(type==='rest')?'':type[0].toUpperCase();
+    }
+    
+ // Convert MIDI note number to name, e.g. 60 -> "C4"
+ function midiNoteNumberToName(num) {
+        const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+        let octave = Math.floor(num / 12) - 1;
+        let note   = noteNames[num % 12];
+        return note + octave;
+      }
+    // 5) Generate chord note events: array of { note, tick, length, velocity }
+    function generateNoteEvents() {
+      let noteEvents = [];
+      for(let measureIndex=0; measureIndex<4; measureIndex++){
+        let chordEl = document.getElementById('chord'+(measureIndex+1));
+        let chordName = chordEl? chordEl.value : 'D';
+        let chordNotes = chordShapes[chordName];
+        let measureStart = measureIndex*ticksPerMeasure;
+        for(let sub=0; sub<16; sub++){
+          let stroke = pattern[sub];
+          if(stroke!=='rest'){
+            let props = strokeProperties[stroke];
+            let startTick = measureStart + sub*subdivisionTicks;
+            chordNotes.forEach(n => {
+              noteEvents.push({
+                note:n,         // numeric MIDI note e.g. 50
+                tick:startTick, // absolute start
+                length:props.len,
+                velocity:props.vel
+              });
+            });
+          }
+        }
+      }
+      noteEvents.sort((a,b)=> a.tick - b.tick);
+      return noteEvents;
+    }
+
+    // 6) Raw MIDI: minimal variable-length encoding (VLQ).
+    //    e.g. 480 => [0x83,0x60].
+    function toVarLen(value){
+      let buffer = value & 0x7F;
+      let bytes = [buffer];
+      value >>=7;
+      while(value>0){
+        buffer = (value & 0x7F)|0x80;
+        value >>=7;
+        bytes.unshift(buffer);
+      }
+      return bytes;
+    }
+
+    // 7) Build a single track chunk from noteEvents
+    //    - tempo event
+    //    - noteOn/off for each note
+    //    - endOfTrack
+    function buildTrackData(noteEvents, userBpm=120, fourX=false){
+      let trackData=[];
+
+      // a) tempo meta (delta=0). If you want 4× speed, multiply BPM by 4. 
+      let realBpm = fourX? userBpm*4: userBpm; 
+      let microsPerQN = Math.round(60000000 / realBpm);
+      // => [0x00, 0xFF, 0x51, 0x03, tempo3bytes]
+      trackData.push(
+        0x00,0xFF,0x51,0x03,
+        (microsPerQN>>16)&0xFF,
+        (microsPerQN>>8)&0xFF,
+        (microsPerQN)&0xFF
+      );
+
+      // b) Expand noteOn/noteOff
+      let raw = [];
+      noteEvents.forEach(ev=>{
+        let start=ev.tick;
+        let end=ev.tick+ev.length;
+        // noteOn (channel1)
+        raw.push({
+          tick:start,
+          bytes:[0x90, ev.note, ev.velocity]
+        });
+        // noteOff
+        raw.push({
+          tick:end,
+          bytes:[0x80, ev.note, 0x00]
+        });
+      });
+      raw.sort((a,b)=> a.tick - b.tick);
+
+      let prevTick=0;
+      raw.forEach(r=>{
+        let delta=r.tick-prevTick;
+        let varLen=toVarLen(delta);
+        trackData.push(...varLen, ...r.bytes);
+        prevTick=r.tick;
+      });
+
+      // c) EndOfTrack => [0x00, 0xFF, 0x2F, 0x00]
+      trackData.push(
+        0x00,0xFF,0x2F,0x00
+      );
+      return trackData;
+    }
+
+    // 8) Build a Type-0 MIDI file from trackData
+    function buildFullMidi(trackBytes){
+      // => headerChunk (14 bytes) for Format0, 1 track, division=480
+      let header = [
+        0x4D,0x54,0x68,0x64,  // "MThd"
+        0x00,0x00,0x00,0x06,  // length=6
+        0x00,0x00,            // format=0
+        0x00,0x01,            // 1 track
+        0x01,0xE0             // 0x01E0=480
+      ];
+      // => trackChunk= "MTrk" + length(4 bytes) + trackData
+      let trackLen=trackBytes.length;
+      let lenBytes=[
+        (trackLen>>>24)&0xFF,
+        (trackLen>>>16)&0xFF,
+        (trackLen>>>8)&0xFF,
+        (trackLen&0xFF)
+      ];
+      let trackChunk = [
+        0x4D,0x54,0x72,0x6B, // "MTrk"
+        ...lenBytes,
+        ...trackBytes
+      ];
+      return new Uint8Array([...header, ...trackChunk]);
+    }
+
+    // 9) "Generate MIDI" => merges the raw approach with your strum pattern
+    document.getElementById('generate').addEventListener('click', function(){
+      let bpm = parseInt(document.getElementById('bpm').value);
+
+      // a) Generate chord note events from your pattern, 4 measures, 16 subdivisions, user chords
+      let noteEvents = generateNoteEvents();
+
+      // b) Build the track data
+      //    If you need 4× speed, set "fourX=true"
+      let trackData = buildTrackData(noteEvents, bpm, false /*4x?*/);
+
+      // c) Combine into a single Type-0 MIDI file
+      let fullBytes=buildFullMidi(trackData);
+
+      // d) Download
+      let blob=new Blob([fullBytes], {type:'audio/midi'});
+      saveAs(blob, 'raw_strum_pattern.mid');
+    });
+
+    // 10) "Play Pattern" => Tone.js
+    let currentPart=null;
+    document.getElementById('play').addEventListener('click', function(){
+      let bpm = parseInt(document.getElementById('bpm').value);
+      if(currentPart){
+        currentPart.dispose();
+        currentPart=null;
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+      }
+      let noteEvents=generateNoteEvents();
+      let toneEvents=[];
+      noteEvents.forEach(ev=>{
+        let startSec=(ev.tick/ticksPerBeat)*(60/bpm);
+        let durSec=(ev.length/ticksPerBeat)*(60/bpm);
+        toneEvents.push({
+          time:startSec,
+          note: midiNoteNumberToName(ev.note),
+          duration:durSec,
+          velocity:ev.velocity/127
+        });
+      });
+      let polySynth=new Tone.PolySynth(Tone.Synth).toDestination();
+      Tone.Transport.bpm.value=bpm;
+      const loopBox=document.getElementById('loopCheckbox').checked;
+      if(loopBox){
+        Tone.Transport.loop=true;
+        loopDuration=(ticksPerMeasure/ticksPerBeat)*(60/bpm)*4;
+        Tone.Transport.loopStart=0;
+        Tone.Transport.loopEnd=loopDuration;
+      } else {
+        Tone.Transport.loop=false;
+      }
+      currentPart=new Tone.Part((time,evt)=>{
+        polySynth.triggerAttackRelease(evt.note, evt.duration, time, evt.velocity);
+      },toneEvents);
+      currentPart.start(0);
+      Tone.start().then(()=>Tone.Transport.start());
+    });
+
+    // 11) Loop checkbox => auto stop if unchecked
+    document.getElementById('loopCheckbox').addEventListener('change', function(){
+      if(!this.checked && Tone.Transport.loop){
+        let currentTime=Tone.Transport.seconds;
+        let timeIntoCycle=currentTime%loopDuration;
+        let remaining=loopDuration-timeIntoCycle;
+        Tone.Transport.loop=false;
+        setTimeout(()=>{
+          Tone.Transport.stop();
+          Tone.Transport.cancel();
+          if(currentPart){
+            currentPart.dispose();
+            currentPart=null;
+          }
+        },remaining*1000);
+      }
+      if(this.checked && !Tone.Transport.loop){
+        Tone.Transport.loop=true;
+      }
+    });
+  </script>
+</body>
+</html>
