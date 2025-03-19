@@ -1,613 +1,689 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5HDXJ30SB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5HDXJ30SB"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-Z5HDXJ30SB');
-</script>
-  <meta charset="UTF-8">
-  <title>Four Chord Song Generator</title>
-  <style>
-    /* Dark UI styling */
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fafafa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    body > * {
-      margin: 10px 0;
-    }
-    h1 {
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-    #settings, #chord-progression {
-      text-align: center;
-    }
-    #grid-container {
-      display: inline-block;
-      margin: 0 auto;
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    #grid-labels {
-      display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-gap: 10px;
-      text-align: center;
-      margin-bottom: 5px;
-      margin-top: 5px;
-      font-weight: bold;
-      color: #ccc;
-    }
-    #grid {
-      display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(2, 60px);
-      grid-gap: 10px;
-      text-align: center;
-    }
-    .cell {
-      width: 60px;
-      height: 60px;
-      border: 1px solid #444;
-      background: #2c2c2c;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      font-size: 18px;
-      font-weight: bold;
-      color: #fafafa;
-      transition: background 0.2s;
-    }
-    .cell:hover { background: #3a3a3a; }
-    .cell.down { background: #3CB371; color: #fff; }
-    .cell.mute { background: #D9534F; color: #fff; }
-    .cell.up   { background: #5BC0DE; color: #fff; }
-    .button-container { text-align: center; }
-    button, label {
-      padding: 10px 20px;
-      margin: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #333;
-      color: #fafafa;
-      border: 1px solid #555;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-    button:hover,
-    label:hover {
-      background: #444;
-    }
-    #loopContainer {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #fafafa;
-    }
-    input[type="checkbox"] {
-      accent-color: #5BC0DE;
-    }
-  </style>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-Z5HDXJ30SB');
+    </script>
+    <meta charset="UTF-8">
+    <title>Four Chord Song Generator</title>
+    <style>
+        /* Dark UI styling */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        body>* {
+            margin: 10px 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        #settings,
+        #chord-progression {
+            text-align: center;
+        }
+
+        #grid-container {
+            display: inline-block;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #grid-labels {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-gap: 10px;
+            text-align: center;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(2, 60px);
+            grid-gap: 10px;
+            text-align: center;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #444;
+            background: #2c2c2c;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fafafa;
+            transition: background 0.2s;
+        }
+
+        .cell:hover {
+            background: #3a3a3a;
+        }
+
+        .cell.down {
+            background: #3CB371;
+            color: #fff;
+        }
+
+        .cell.mute {
+            background: #D9534F;
+            color: #fff;
+        }
+
+        .cell.up {
+            background: #5BC0DE;
+            color: #fff;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        button,
+        label {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #333;
+            color: #fafafa;
+            border: 1px solid #555;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        button:hover,
+        label:hover {
+            background: #444;
+        }
+
+        #loopContainer {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #fafafa;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #5BC0DE;
+        }
+    </style>
 </head>
+
 <body>
     <header style="text-align: center; padding: 10px 15px;">
         <h1 style="margin-bottom: 5px; font-size: 24px;">Four Chord Song Generator</h1>
         <div style="font-size: 14px; color: #ccc;">
-          <span>A project by <a href="https://tomvelle.com" target="_blank" style="color: #5BC0DE; text-decoration: none; font-weight: bold;">Tom Velle</a></span>
+            <span>a project by <a href="https://tomvelle.com" target="_blank" style="color: #5BC0DE; text-decoration: none; font-weight: bold;">tom velle</a></span>
         </div>
         <button id="toggleInfo" style="margin-top: 10px; font-size: 14px; padding: 6px 12px;">ℹ️ Show Instructions</button>
         <div id="infoBox" style="display: none; max-width: 700px; margin: 10px auto; font-size: 14px; color: #ccc; text-align: left; line-height: 1.5;">
-          <ul>
-            <li><strong>Grid:</strong> Click each box to cycle through <em>Down</em>, <em>Mute</em>, <em>Up</em>, or <em>Rest</em>.</li>
-            <li><strong>Chords:</strong> Select up to four chords, one per measure.</li>
-            <li><strong>BPM:</strong> Adjust the tempo to your preference.</li>
-            <li><strong>Randomize:</strong> Check “Randomize Pattern” or “Randomize Chords” and click “Randomize.”</li>
-            <li><strong>Play:</strong> Click “Play Pattern” to preview in your browser.</li>
-            <li><strong>Download:</strong> Save a MIDI file with “Generate MIDI (Download).”</li>
-            <li><strong>Share:</strong> Click “📤 Share” to copy a link to your custom pattern.</li>
-          </ul>
+            <ul>
+                <li><strong>Grid:</strong> Click each box to cycle through <em>Down</em>, <em>Mute</em>, <em>Up</em>, or <em>Rest</em>.</li>
+                <li><strong>Chords:</strong> Select up to four chords, one per measure.</li>
+                <li><strong>BPM:</strong> Adjust the tempo to your preference.</li>
+                <li><strong>Randomize:</strong> Check “Randomize Pattern” or “Randomize Chords” and click “Randomize.”</li>
+                <li><strong>Play:</strong> Click “Play Pattern” to preview in your browser.</li>
+                <li><strong>Download:</strong> Save a MIDI file with “Generate MIDI (Download).”</li>
+                <li><strong>Share:</strong> Click “📤 Share” to copy a link to your custom pattern.</li>
+            </ul>
         </div>
-      </header>
-      
-      <script>
+    </header>
+
+    <script>
         document.getElementById("toggleInfo").addEventListener("click", function() {
-          let infoBox = document.getElementById("infoBox");
-          infoBox.style.display = (infoBox.style.display === "none") ? "block" : "none";
-          this.innerText = infoBox.style.display === "none" ? "ℹ️ Show Instructions" : "ℹ️ Hide Instructions";
+            let infoBox = document.getElementById("infoBox");
+            infoBox.style.display = (infoBox.style.display === "none") ? "block" : "none";
+            this.innerText = infoBox.style.display === "none" ? "ℹ️ Show Instructions" : "ℹ️ Hide Instructions";
         });
-      </script>
-        
-  <!-- Global Settings -->
-  <div id="settings">
-    <label>BPM: <input type="number" id="bpm" value="120" min="60" max="240"></label>
-  </div>
-  
-  <!-- Chord Progression Selection (4 measures) -->
-  <div id="chord-progression">
-    <p>Chord Progression (4 measures):</p>
-    <select id="chord1">
-      <option value="D" selected>D</option>
-      <option value="A">A</option>
-      <option value="Bm">Bm</option>
-      <option value="G">G</option>
-      <option value="C">C</option>
-      <option value="E">E</option>
-    </select>
-    <select id="chord2">
-      <option value="D">D</option>
-      <option value="A" selected>A</option>
-      <option value="Bm">Bm</option>
-      <option value="G">G</option>
-      <option value="C">C</option>
-      <option value="E">E</option>
-    </select>
-    <select id="chord3">
-      <option value="D">D</option>
-      <option value="A">A</option>
-      <option value="Bm" selected>Bm</option>
-      <option value="G">G</option>
-      <option value="C">C</option>
-      <option value="E">E</option>
-    </select>
-    <select id="chord4">
-      <option value="D">D</option>
-      <option value="A">A</option>
-      <option value="Bm">Bm</option>
-      <option value="G" selected>G</option>
-      <option value="C">C</option>
-      <option value="E">E</option>
-    </select>
-  </div>
+    </script>
 
-  <!-- Labeled Grid UI (16 cells in 2 rows) -->
-  <div id="grid-container">
-    <div id="grid-labels">
-      <div>1</div>
-      <div>&amp;</div>
-      <div>2</div>
-      <div>&amp;</div>
-      <div>3</div>
-      <div>&amp;</div>
-      <div>4</div>
-      <div>&amp;</div>
+    <!-- Global Settings -->
+    <div id="settings">
+        <label>BPM: <input type="number" id="bpm" value="120" min="60" max="240"></label>
     </div>
-    <div id="grid">
-      <!-- Cells inserted by JavaScript -->
+
+    <!-- Chord Progression Selection (4 measures) -->
+    <div id="chord-progression">
+        <p>Chord Progression (4 measures):</p>
+        <select id="chord1">
+            <option value="D" selected>D</option>
+            <option value="A">A</option>
+            <option value="Bm">Bm</option>
+            <option value="G">G</option>
+            <option value="C">C</option>
+            <option value="E">E</option>
+        </select>
+        <select id="chord2">
+            <option value="D">D</option>
+            <option value="A" selected>A</option>
+            <option value="Bm">Bm</option>
+            <option value="G">G</option>
+            <option value="C">C</option>
+            <option value="E">E</option>
+        </select>
+        <select id="chord3">
+            <option value="D">D</option>
+            <option value="A">A</option>
+            <option value="Bm" selected>Bm</option>
+            <option value="G">G</option>
+            <option value="C">C</option>
+            <option value="E">E</option>
+        </select>
+        <select id="chord4">
+            <option value="D">D</option>
+            <option value="A">A</option>
+            <option value="Bm">Bm</option>
+            <option value="G" selected>G</option>
+            <option value="C">C</option>
+            <option value="E">E</option>
+        </select>
     </div>
-    <div id="grid-labels">
-        <div>5</div>
-        <div>&amp;</div>
-        <div>6</div>
-        <div>&amp;</div>
-        <div>7</div>
-        <div>&amp;</div>
-        <div>8</div>
-        <div>&amp;</div>
-      </div>
-  
-  </div>
 
-  <!-- Randomization Controls -->
-  <div style="text-align:center;">
-    <label><input type="checkbox" id="randPattern" checked> Randomize Pattern</label>
-    <label><input type="checkbox" id="randChords" checked> Randomize Chords</label>
-    <button id="randomBtn">Randomize</button><button id="shareBtn">📤 Share</button>
-  </div>
+    <!-- Labeled Grid UI (16 cells in 2 rows) -->
+    <div id="grid-container">
+        <div id="grid-labels">
+            <div>1</div>
+            <div>&amp;</div>
+            <div>2</div>
+            <div>&amp;</div>
+            <div>3</div>
+            <div>&amp;</div>
+            <div>4</div>
+            <div>&amp;</div>
+        </div>
+        <div id="grid">
+            <!-- Cells inserted by JavaScript -->
+        </div>
+        <div id="grid-labels">
+            <div>5</div>
+            <div>&amp;</div>
+            <div>6</div>
+            <div>&amp;</div>
+            <div>7</div>
+            <div>&amp;</div>
+            <div>8</div>
+            <div>&amp;</div>
+        </div>
 
-  <div class="button-container">
-    <button id="generate">Generate MIDI (Download)</button>
-    <button id="play">Play Pattern</button>    <label><input type="checkbox" id="loopCheckbox" >Loop</label>
-  </div>
-  <div id="shareBox" style="text-align:center; margin-top:10px; max-width:700px; word-wrap:break-word; font-size:14px; color:#ccc;"></div>
+    </div>
 
-  <!-- Tools for saving file, playback logic, etc. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <script src="https://unpkg.com/tone"></script>
+    <!-- Randomization Controls -->
+    <div style="text-align:center;">
+        <label><input type="checkbox" id="randPattern" checked> Randomize Pattern</label>
+        <label><input type="checkbox" id="randChords" checked> Randomize Chords</label>
+        <button id="randomBtn">Randomize</button><button id="shareBtn">📤 Share</button>
+    </div>
 
-  <script>
-    /*********************************************************
-     * 1) STROKE TYPES, CHORDS, AND PATTERN STATE
-     *********************************************************/
-    const strokeTypes = ['rest','down','mute','up'];
-    const strokeProperties = {
-      'rest': { vel:0,   len:0   },
-      'down': { vel:100, len:120 },
-      'mute': { vel:40,  len:60  },
-      'up':   { vel:60,  len:120 }
-    };
-    const chordShapes = {
-      "C":  [48, 52, 55],
-      "D":  [50, 54, 57],
-      "E":  [52, 56, 59],
-      "F":  [53, 57, 60],
-      "G":  [55, 59, 62],
-      "A":  [57, 61, 64],
-      "Bm": [47, 50, 54]
-    };
-    // 4 measures, 16 subdivisions => default pattern:
-    let defaultPattern = [
-      'down','rest','mute','rest',
-      'down','rest','mute','up',
-      'down','up','down','rest',
-      'down','rest','down','up'
-    ];
-    let pattern=[];
+    <div class="button-container">
+        <button id="generate">Generate MIDI (Download)</button>
+        <button id="play">Play Pattern</button> <label><input type="checkbox" id="loopCheckbox">Loop</label>
+    </div>
+    <div id="shareBox" style="text-align:center; margin-top:10px; max-width:700px; word-wrap:break-word; font-size:14px; color:#ccc;"></div>
 
-    // 2) TICKS
-    const ticksPerBeat = 480;
-    const ticksPerMeasure = ticksPerBeat*4; // 1920
-    const subdivisionTicks = ticksPerMeasure/16; //120
+    <!-- Tools for saving file, playback logic, etc. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/tone"></script>
 
-    // 3) Initialize pattern from ?pattern= or fallback
-    let urlParams=new URLSearchParams(window.location.search);
-    let patternParam = urlParams.get('pattern');
-    if(patternParam){
-      let arr = patternParam.split(',');
-      for(let i=0; i<16; i++){
-        let s=arr[i]? arr[i].trim().toLowerCase():'rest';
-        pattern.push(strokeTypes.includes(s)? s:'rest');
-      }
-    } else {
-      pattern=[...defaultPattern];
-    }
+    <script>
+        /*********************************************************
+         * 1) STROKE TYPES, CHORDS, AND PATTERN STATE
+         *********************************************************/
+        const strokeTypes = ['rest', 'down', 'mute', 'up'];
+        const strokeProperties = {
+            'rest': {
+                vel: 0,
+                len: 0
+            },
+            'down': {
+                vel: 100,
+                len: 120
+            },
+            'mute': {
+                vel: 40,
+                len: 60
+            },
+            'up': {
+                vel: 60,
+                len: 120
+            }
+        };
+        const chordShapes = {
+            "C": [48, 52, 55],
+            "D": [50, 54, 57],
+            "E": [52, 56, 59],
+            "F": [53, 57, 60],
+            "G": [55, 59, 62],
+            "A": [57, 61, 64],
+            "Bm": [47, 50, 54]
+        };
+        // 4 measures, 16 subdivisions => default pattern:
+        let defaultPattern = [
+            'rest', 'rest', 'rest', 'rest',
+            'rest', 'rest', 'rest', 'rest',
+            'rest', 'rest', 'rest', 'rest',
+            'rest', 'rest', 'rest', 'rest'
+        ];
+        let pattern = [];
 
-    // 4) BUILD GRID
-    const gridContainer=document.getElementById('grid');
-    for(let i=0;i<16;i++){
-      const cell=document.createElement('div');
-      cell.classList.add('cell');
-      cell.dataset.index=i;
-      updateCell(cell, pattern[i]);
-      cell.addEventListener('click', ()=>{
-        let idx=parseInt(cell.dataset.index);
-        let cur=pattern[idx];
-        let next=strokeTypes[(strokeTypes.indexOf(cur)+1)%strokeTypes.length];
-        pattern[idx]=next;
-        updateCell(cell, next);
-      });
-      gridContainer.appendChild(cell);
-    }
-    function updateCell(cell, type){
-      cell.className='cell';
-      cell.classList.add(type);
-      cell.innerText=(type==='rest')?'':type[0].toUpperCase();
-    }
+        // 2) TICKS
+        const ticksPerBeat = 480;
+        const ticksPerMeasure = ticksPerBeat * 4; // 1920
+        const subdivisionTicks = ticksPerMeasure / 16; //120
 
-    /*********************************************************
-     * 5) GENERATE CHORD NOTE EVENTS => {note, tick, length, velocity}
-     *********************************************************/
-     function generateNoteEvents() {
-  let noteEvents = [];
-  for (let measureIndex = 0; measureIndex < 4; measureIndex++) {
-    const chordEl = document.getElementById('chord' + (measureIndex + 1));
-    let chordName = chordEl ? chordEl.value : '';
-    // if chordName is empty or chordShapes[chordName] doesn't exist, fallback or skip
-    let chordNotes = chordShapes[chordName] || [];
-    if (!Array.isArray(chordNotes) || chordNotes.length === 0) {
-      // If truly empty, skip this measure or fallback to a default chord
-      // e.g. fallback to "D" or do nothing
-      // chordNotes = chordShapes["D"];
-      continue;
-    }
+        // 3) Initialize pattern, BPM, and chords from URL parameters or fallback defaults
+        let urlParams = new URLSearchParams(window.location.search);
 
-    let measureStart = measureIndex * ticksPerMeasure;
-    for (let sub = 0; sub < 16; sub++) {
-      let stroke = pattern[sub];
-      if (stroke !== 'rest') {
-        let props = strokeProperties[stroke];
-        let startTick = measureStart + sub * subdivisionTicks;
-        chordNotes.forEach(n => {
-          noteEvents.push({
-            note: n,
-            tick: startTick,
-            length: props.len,
-            velocity: props.vel
-          });
-        });
-      }
-    }
-  }
-  noteEvents.sort((a, b) => a.tick - b.tick);
-  return noteEvents;
-}
-    /*********************************************************
-     * 6) RAW MIDI WRITING: Build Type-0 track from noteEvents
-     *********************************************************/
-    // VarLen encoding for delta times
-    function toVarLen(value){
-      let buffer=value & 0x7F;
-      let bytes=[buffer];
-      value>>=7;
-      while(value>0){
-        buffer=(value & 0x7F)|0x80;
-        value>>=7;
-        bytes.unshift(buffer);
-      }
-      return bytes;
-    }
-
-    // Build track data:
-    // - tempo meta event
-    // - noteOn/noteOff
-    // - endOfTrack
-    function buildTrackData(noteEvents, userBpm=120, fourX=false){
-      let trackData=[];
-      let realBpm=fourX? userBpm*4 : userBpm;
-      let microsec=Math.round(60000000/realBpm);
-
-      // tempo => delta=0 => [0x00, 0xFF, 0x51, 0x03, microsec(3bytes)]
-      trackData.push(
-        0x00,0xFF,0x51,0x03,
-        (microsec>>16)&0xFF,
-        (microsec>>8)&0xFF,
-        (microsec)&0xFF
-      );
-
-      // Expand noteOn/noteOff
-      let raw=[];
-      noteEvents.forEach(ev=>{
-        raw.push({
-          tick: ev.tick,
-          bytes:[0x90, ev.note, ev.velocity]
-        });
-        raw.push({
-          tick: ev.tick+ev.length,
-          bytes:[0x80, ev.note, 0x00]
-        });
-      });
-      raw.sort((a,b)=> a.tick-b.tick);
-
-      let prev=0;
-      raw.forEach(r=>{
-        let delta=r.tick - prev;
-        trackData.push(...toVarLen(delta), ...r.bytes);
-        prev=r.tick;
-      });
-
-      // endOfTrack => [0x00, 0xFF, 0x2F, 0x00]
-      trackData.push(0x00,0xFF,0x2F,0x00);
-      return trackData;
-    }
-
-    // Combine into single Type-0 MIDI
-    function buildFullMidi(trackData){
-      // header => "MThd", length=6, format=0, nTracks=1, division=480
-      let header=[
-        0x4D,0x54,0x68,0x64,
-        0x00,0x00,0x00,0x06,
-        0x00,0x00,
-        0x00,0x01,
-        0x01,0xE0
-      ];
-      // track => "MTrk" + 4byte length + data
-      let len=trackData.length;
-      let lenBytes=[
-        (len>>>24)&0xFF,
-        (len>>>16)&0xFF,
-        (len>>>8)&0xFF,
-        (len&0xFF)
-      ];
-      let trackChunk=[
-        0x4D,0x54,0x72,0x6B,
-        ...lenBytes,
-        ...trackData
-      ];
-      return new Uint8Array([...header, ...trackChunk]);
-    }
-
-    // "Generate MIDI" => merges raw approach with existing strum pattern
-    document.getElementById("generate").addEventListener("click", function(){
-      let bpm=parseInt(document.getElementById("bpm").value);
-
-      // Build chord note events from the current pattern & chords
-      let noteEvents=generateNoteEvents();
-
-      // If you want 4× speed, set "true"
-      let trackData=buildTrackData(noteEvents, bpm, false);
-      let fullBytes=buildFullMidi(trackData);
-
-      let blob=new Blob([fullBytes], {type:'audio/midi'});
-      saveAs(blob, "raw_strum_pattern.mid");
-    });
-
-/*********************************************************
- * 7) Tone.js Playback (Loop Now Only Affects Playback Without Restarting)
- *********************************************************/
- let currentPart = null, loopDuration = 0;
-let polySynth = new Tone.PolySynth(Tone.Synth, { maxPolyphony: 4 }).toDestination();
-
-document.getElementById('play').addEventListener('click', function () {
-    let bpm = parseInt(document.getElementById("bpm").value);
-    
-    // Stop existing playback before starting a new one
-    if (currentPart) {
-        currentPart.dispose();
-        currentPart = null;
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
-    }
-
-    let events = generateNoteEvents();
-    let toneEvents = [];
-
-    events.forEach(ev => {
-        let startSec = (ev.tick / ticksPerBeat) * (60 / bpm);
-        let durSec = (ev.length / ticksPerBeat) * (60 / bpm);
-        toneEvents.push({
-            time: startSec,
-            note: midiNumberToName(ev.note),
-            duration: durSec,
-            velocity: ev.velocity / 127
-        });
-    });
-
-    Tone.Transport.bpm.value = bpm;
-    loopDuration = (ticksPerMeasure / ticksPerBeat) * (60 / bpm) * 4;
-
-    // Check if looping is enabled
-    if (document.getElementById('loopCheckbox').checked) {
-        Tone.Transport.loop = true;
-        Tone.Transport.loopStart = 0;
-        Tone.Transport.loopEnd = loopDuration;
-    } else {
-        Tone.Transport.loop = false;
-    }
-
-    currentPart = new Tone.Part((time, evt) => {
-        polySynth.triggerAttackRelease(evt.note, evt.duration, time, evt.velocity);
-    }, toneEvents);
-
-    currentPart.start(0);
-
-    // Start transport only if Tone.js has been started
-    Tone.start().then(() => Tone.Transport.start());
-});
-
-/*********************************************************
- * 8) Handle Loop Toggle Without Restarting Playback
- *********************************************************/
-document.getElementById('loopCheckbox').addEventListener('change', function () {
-    if (Tone.Transport.state === "started") {
-        if (this.checked) {
-            // If loop is enabled, make sure it loops naturally at the end of playback
-            Tone.Transport.loop = true;
-            Tone.Transport.loopStart = 0;
-            Tone.Transport.loopEnd = loopDuration;
+        // Load pattern from ?pattern=
+        let patternParam = urlParams.get("pattern");
+        if (patternParam) {
+            let arr = patternParam.split(",");
+            pattern = [];
+            for (let i = 0; i < 16; i++) {
+                let s = arr[i] ? arr[i].trim().toLowerCase() : "rest";
+                pattern.push(strokeTypes.includes(s) ? s : "rest");
+            }
         } else {
-            // If loop is disabled mid-playback, let it finish the current loop, then stop
-            let currentTime = Tone.Transport.seconds;
-            let timeIntoCycle = currentTime % loopDuration;
-            let timeRemaining = loopDuration - timeIntoCycle;
+            pattern = [...defaultPattern];
+        }
 
-            setTimeout(() => {
+        // Load BPM from ?bpm=
+        let bpmParam = urlParams.get("bpm");
+        if (bpmParam) {
+            document.getElementById("bpm").value = bpmParam;
+        }
+
+        // Load chords from ?chords=
+        let chordsParam = urlParams.get("chords");
+        if (chordsParam) {
+            let chordsArray = chordsParam.split(",");
+            for (let i = 0; i < 4; i++) {
+                let chordSelect = document.getElementById("chord" + (i + 1));
+                if (chordsArray[i] && chordSelect) {
+                    chordSelect.value = chordsArray[i];
+                }
+            }
+        }
+
+        // 4) BUILD GRID
+        const gridContainer = document.getElementById('grid');
+        for (let i = 0; i < 16; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = i;
+            updateCell(cell, pattern[i]);
+            cell.addEventListener('click', () => {
+                let idx = parseInt(cell.dataset.index);
+                let cur = pattern[idx];
+                let next = strokeTypes[(strokeTypes.indexOf(cur) + 1) % strokeTypes.length];
+                pattern[idx] = next;
+                updateCell(cell, next);
+            });
+            gridContainer.appendChild(cell);
+        }
+
+        function updateCell(cell, type) {
+            cell.className = 'cell';
+            cell.classList.add(type);
+            cell.innerText = (type === 'rest') ? '' : type[0].toUpperCase();
+        }
+
+        /*********************************************************
+         * 5) GENERATE CHORD NOTE EVENTS => {note, tick, length, velocity}
+         *********************************************************/
+        function generateNoteEvents() {
+            let noteEvents = [];
+            for (let measureIndex = 0; measureIndex < 4; measureIndex++) {
+                const chordEl = document.getElementById('chord' + (measureIndex + 1));
+                let chordName = chordEl ? chordEl.value : '';
+                // if chordName is empty or chordShapes[chordName] doesn't exist, fallback or skip
+                let chordNotes = chordShapes[chordName] || [];
+                if (!Array.isArray(chordNotes) || chordNotes.length === 0) {
+                    // If truly empty, skip this measure or fallback to a default chord
+                    // e.g. fallback to "D" or do nothing
+                    // chordNotes = chordShapes["D"];
+                    continue;
+                }
+
+                let measureStart = measureIndex * ticksPerMeasure;
+                for (let sub = 0; sub < 16; sub++) {
+                    let stroke = pattern[sub];
+                    if (stroke !== 'rest') {
+                        let props = strokeProperties[stroke];
+                        let startTick = measureStart + sub * subdivisionTicks;
+                        chordNotes.forEach(n => {
+                            noteEvents.push({
+                                note: n,
+                                tick: startTick,
+                                length: props.len,
+                                velocity: props.vel
+                            });
+                        });
+                    }
+                }
+            }
+            noteEvents.sort((a, b) => a.tick - b.tick);
+            return noteEvents;
+        }
+        /*********************************************************
+         * 6) RAW MIDI WRITING: Build Type-0 track from noteEvents
+         *********************************************************/
+        // VarLen encoding for delta times
+        function toVarLen(value) {
+            let buffer = value & 0x7F;
+            let bytes = [buffer];
+            value >>= 7;
+            while (value > 0) {
+                buffer = (value & 0x7F) | 0x80;
+                value >>= 7;
+                bytes.unshift(buffer);
+            }
+            return bytes;
+        }
+
+        // Build track data:
+        // - tempo meta event
+        // - noteOn/noteOff
+        // - endOfTrack
+        function buildTrackData(noteEvents, userBpm = 120, fourX = false) {
+            let trackData = [];
+            let realBpm = fourX ? userBpm * 4 : userBpm;
+            let microsec = Math.round(60000000 / realBpm);
+
+            // tempo => delta=0 => [0x00, 0xFF, 0x51, 0x03, microsec(3bytes)]
+            trackData.push(
+                0x00, 0xFF, 0x51, 0x03,
+                (microsec >> 16) & 0xFF,
+                (microsec >> 8) & 0xFF,
+                (microsec) & 0xFF
+            );
+
+            // Expand noteOn/noteOff
+            let raw = [];
+            noteEvents.forEach(ev => {
+                raw.push({
+                    tick: ev.tick,
+                    bytes: [0x90, ev.note, ev.velocity]
+                });
+                raw.push({
+                    tick: ev.tick + ev.length,
+                    bytes: [0x80, ev.note, 0x00]
+                });
+            });
+            raw.sort((a, b) => a.tick - b.tick);
+
+            let prev = 0;
+            raw.forEach(r => {
+                let delta = r.tick - prev;
+                trackData.push(...toVarLen(delta), ...r.bytes);
+                prev = r.tick;
+            });
+
+            // endOfTrack => [0x00, 0xFF, 0x2F, 0x00]
+            trackData.push(0x00, 0xFF, 0x2F, 0x00);
+            return trackData;
+        }
+
+        // Combine into single Type-0 MIDI
+        function buildFullMidi(trackData) {
+            // header => "MThd", length=6, format=0, nTracks=1, division=480
+            let header = [
+                0x4D, 0x54, 0x68, 0x64,
+                0x00, 0x00, 0x00, 0x06,
+                0x00, 0x00,
+                0x00, 0x01,
+                0x01, 0xE0
+            ];
+            // track => "MTrk" + 4byte length + data
+            let len = trackData.length;
+            let lenBytes = [
+                (len >>> 24) & 0xFF,
+                (len >>> 16) & 0xFF,
+                (len >>> 8) & 0xFF,
+                (len & 0xFF)
+            ];
+            let trackChunk = [
+                0x4D, 0x54, 0x72, 0x6B,
+                ...lenBytes,
+                ...trackData
+            ];
+            return new Uint8Array([...header, ...trackChunk]);
+        }
+
+        // "Generate MIDI" => merges raw approach with existing strum pattern
+        document.getElementById("generate").addEventListener("click", function() {
+            let bpm = parseInt(document.getElementById("bpm").value);
+
+            // Build chord note events from the current pattern & chords
+            let noteEvents = generateNoteEvents();
+
+            // If you want 4× speed, set "true"
+            let trackData = buildTrackData(noteEvents, bpm, false);
+            let fullBytes = buildFullMidi(trackData);
+
+            let blob = new Blob([fullBytes], {
+                type: 'audio/midi'
+            });
+            saveAs(blob, "raw_strum_pattern.mid");
+        });
+
+        /*********************************************************
+         * 7) Tone.js Playback (Loop Now Only Affects Playback Without Restarting)
+         *********************************************************/
+        let currentPart = null,
+            loopDuration = 0;
+        let polySynth = new Tone.PolySynth(Tone.Synth, {
+            maxPolyphony: 4
+        }).toDestination();
+
+        document.getElementById('play').addEventListener('click', function() {
+            let bpm = parseInt(document.getElementById("bpm").value);
+
+            // Stop existing playback before starting a new one
+            if (currentPart) {
+                currentPart.dispose();
+                currentPart = null;
                 Tone.Transport.stop();
                 Tone.Transport.cancel();
-                if (currentPart) {
-                    currentPart.dispose();
-                    currentPart = null;
+            }
+
+            let events = generateNoteEvents();
+            let toneEvents = [];
+
+            events.forEach(ev => {
+                let startSec = (ev.tick / ticksPerBeat) * (60 / bpm);
+                let durSec = (ev.length / ticksPerBeat) * (60 / bpm);
+                toneEvents.push({
+                    time: startSec,
+                    note: midiNumberToName(ev.note),
+                    duration: durSec,
+                    velocity: ev.velocity / 127
+                });
+            });
+
+            Tone.Transport.bpm.value = bpm;
+            loopDuration = (ticksPerMeasure / ticksPerBeat) * (60 / bpm) * 4;
+
+            // Check if looping is enabled
+            if (document.getElementById('loopCheckbox').checked) {
+                Tone.Transport.loop = true;
+                Tone.Transport.loopStart = 0;
+                Tone.Transport.loopEnd = loopDuration;
+            } else {
+                Tone.Transport.loop = false;
+            }
+
+            currentPart = new Tone.Part((time, evt) => {
+                polySynth.triggerAttackRelease(evt.note, evt.duration, time, evt.velocity);
+            }, toneEvents);
+
+            currentPart.start(0);
+
+            // Start transport only if Tone.js has been started
+            Tone.start().then(() => Tone.Transport.start());
+        });
+
+        /*********************************************************
+         * 8) Handle Loop Toggle Without Restarting Playback
+         *********************************************************/
+        document.getElementById('loopCheckbox').addEventListener('change', function() {
+            if (Tone.Transport.state === "started") {
+                if (this.checked) {
+                    // If loop is enabled, make sure it loops naturally at the end of playback
+                    Tone.Transport.loop = true;
+                    Tone.Transport.loopStart = 0;
+                    Tone.Transport.loopEnd = loopDuration;
+                } else {
+                    // If loop is disabled mid-playback, let it finish the current loop, then stop
+                    let currentTime = Tone.Transport.seconds;
+                    let timeIntoCycle = currentTime % loopDuration;
+                    let timeRemaining = loopDuration - timeIntoCycle;
+
+                    setTimeout(() => {
+                        Tone.Transport.stop();
+                        Tone.Transport.cancel();
+                        if (currentPart) {
+                            currentPart.dispose();
+                            currentPart = null;
+                        }
+                    }, timeRemaining * 1000);
                 }
-            }, timeRemaining * 1000);
+            }
+        });
+
+        // Convert numeric MIDI note => string name, e.g. 60 => "C4"
+        function midiNumberToName(num) {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            let octave = Math.floor(num / 12) - 1;
+            let note = noteNames[num % 12];
+            return note + octave;
         }
-    }
-});
 
-    // Convert numeric MIDI note => string name, e.g. 60 => "C4"
-    function midiNumberToName(num){
-      const noteNames=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-      let octave=Math.floor(num/12)-1;
-      let note=noteNames[num%12];
-      return note+octave;
-    }
+        // Stop loop if unchecked mid-play
+        document.getElementById('loopCheckbox').addEventListener('change', function() {
+            if (!this.checked && Tone.Transport.loop) {
+                let currentTime = Tone.Transport.seconds;
+                let timeIntoCycle = currentTime % loopDuration;
+                let remain = loopDuration - timeIntoCycle;
+                Tone.Transport.loop = false;
+                setTimeout(() => {
+                    Tone.Transport.stop();
+                    Tone.Transport.cancel();
+                    if (currentPart) {
+                        currentPart.dispose();
+                        currentPart = null;
+                    }
+                }, remain * 1000);
+            }
+            if (this.checked && !Tone.Transport.loop) {
+                Tone.Transport.loop = true;
+            }
+        });
 
-    // Stop loop if unchecked mid-play
-    document.getElementById('loopCheckbox').addEventListener('change', function(){
-      if(!this.checked && Tone.Transport.loop){
-        let currentTime=Tone.Transport.seconds;
-        let timeIntoCycle=currentTime%loopDuration;
-        let remain=loopDuration-timeIntoCycle;
-        Tone.Transport.loop=false;
-        setTimeout(()=>{
-          Tone.Transport.stop();
-          Tone.Transport.cancel();
-          if(currentPart){
-            currentPart.dispose();
-            currentPart=null;
-          }
-        },remain*1000);
-      }
-      if(this.checked && !Tone.Transport.loop){
-        Tone.Transport.loop=true;
-      }
-    });
+        /*********************************************************
+         * 8) RANDOMIZATION LOGIC
+         *********************************************************/
+        const randomBtn = document.getElementById("randomBtn");
+        randomBtn.addEventListener("click", function() {
+            const randPattern = document.getElementById("randPattern").checked;
+            const randChords = document.getElementById("randChords").checked;
 
-    /*********************************************************
-     * 8) RANDOMIZATION LOGIC
-     *********************************************************/
-    const randomBtn=document.getElementById("randomBtn");
-    randomBtn.addEventListener("click", function(){
-      const randPattern=document.getElementById("randPattern").checked;
-      const randChords=document.getElementById("randChords").checked;
+            // A) Randomize pattern if needed
+            if (randPattern) {
+                for (let i = 0; i < 16; i++) {
+                    let pick = strokeTypes[Math.floor(Math.random() * strokeTypes.length)];
+                    pattern[i] = pick;
+                }
+            }
+            // Update the grid UI
+            for (let i = 0; i < 16; i++) {
+                let cell = document.querySelector(`.cell[data-index="${i}"]`);
+                updateCell(cell, pattern[i]);
+            }
 
-      // A) Randomize pattern if needed
-      if(randPattern){
-        for(let i=0; i<16; i++){
-          let pick= strokeTypes[Math.floor(Math.random()*strokeTypes.length)];
-          pattern[i]=pick;
+            // B) Randomize chords if needed
+            if (randChords) {
+                // all chord keys
+                let chordKeys = Object.keys(chordShapes);
+                // for each measure (1..4)
+                for (let measureIndex = 1; measureIndex <= 4; measureIndex++) {
+                    let pick = chordKeys[Math.floor(Math.random() * chordKeys.length)];
+                    document.getElementById("chord" + measureIndex).value = pick;
+                }
+            }
+        });
+
+
+
+        // Function to create a shareable URL
+        function generateShareURL() {
+            let bpm = document.getElementById("bpm").value;
+            let chord1 = document.getElementById("chord1").value;
+            let chord2 = document.getElementById("chord2").value;
+            let chord3 = document.getElementById("chord3").value;
+            let chord4 = document.getElementById("chord4").value;
+            let patternString = pattern.join(","); // Use "-" for cleaner URLs
+
+            let baseURL = window.location.origin + window.location.pathname;
+            let shareURL = `${baseURL}?bpm=${bpm}&chords=${chord1},${chord2},${chord3},${chord4}&pattern=${patternString}`;
+
+            return shareURL;
         }
-      }
-      // Update the grid UI
-      for(let i=0; i<16; i++){
-        let cell=document.querySelector(`.cell[data-index="${i}"]`);
-        updateCell(cell, pattern[i]);
-      }
 
-      // B) Randomize chords if needed
-      if(randChords){
-        // all chord keys
-        let chordKeys=Object.keys(chordShapes);
-        // for each measure (1..4)
-        for(let measureIndex=1; measureIndex<=4; measureIndex++){
-          let pick= chordKeys[Math.floor(Math.random()*chordKeys.length)];
-          document.getElementById("chord"+measureIndex).value=pick;
-        }
-      }
-    });
+        // Function to display and copy the shareable URL
+        function copyShareURL() {
+            let url = generateShareURL();
 
-
-
-// Function to create a shareable URL
-function generateShareURL() {
-    let bpm = document.getElementById("bpm").value;
-    let chord1 = document.getElementById("chord1").value;
-    let chord2 = document.getElementById("chord2").value;
-    let chord3 = document.getElementById("chord3").value;
-    let chord4 = document.getElementById("chord4").value;
-    let patternString = pattern.join(","); // Use "-" for cleaner URLs
-
-    let baseURL = window.location.origin + window.location.pathname;
-    let shareURL = `${baseURL}?bpm=${bpm}&chords=${chord1},${chord2},${chord3},${chord4}&pattern=${patternString}`;
-
-    return shareURL;
-}
-
-// Function to display and copy the shareable URL
-function copyShareURL() {
-    let url = generateShareURL();
-    
-    // Display the URL in the shareBox div
-    let shareBox = document.getElementById("shareBox");
-    shareBox.innerHTML = `<p>📤 <strong>Shareable Link:</strong></p>
+            // Display the URL in the shareBox div
+            let shareBox = document.getElementById("shareBox");
+            shareBox.innerHTML = `<p>📤 <strong>Shareable Link:</strong></p>
                           <p><a href="${url}" target="_blank" id="shareLink">${url}</a></p>
                           <p><small>(Click the link to copy)</small></p>`;
-    
-    // Auto-copy the URL to clipboard when clicking the link
-    document.getElementById("shareLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        navigator.clipboard.writeText(url).then(() => {
-            shareBox.innerHTML += `<p style="color: #5BC0DE;">✅ Link copied to clipboard!</p>`;
-        }).catch(err => console.error("Failed to copy: ", err));
-    });
-}
 
-// Hook up the Share button to the function
-document.getElementById("shareBtn").addEventListener("click", copyShareURL);
+            // Auto-copy the URL to clipboard when clicking the link
+            document.getElementById("shareLink").addEventListener("click", function(e) {
+                e.preventDefault();
+                navigator.clipboard.writeText(url).then(() => {
+                    shareBox.innerHTML += `<p style="color: #5BC0DE;">✅ Link copied to clipboard!</p>`;
+                }).catch(err => console.error("Failed to copy: ", err));
+            });
+        }
 
-  </script>
+        // Hook up the Share button to the function
+        document.getElementById("shareBtn").addEventListener("click", copyShareURL);
+    </script>
 </body>
+
 </html>
