@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z5HDXJ30SB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z5HDXJ30SB');
+</script>
   <meta charset="UTF-8">
-  <title>Strum Pattern Generator with Randomizer</title>
+  <title>Four Chord Song Generator</title>
   <style>
     /* Dark UI styling */
     html, body {
@@ -17,7 +26,7 @@
       min-height: 100vh;
     }
     body > * {
-      margin: 20px 0;
+      margin: 10px 0;
     }
     h1 {
       margin-bottom: 10px;
@@ -38,7 +47,8 @@
       grid-template-columns: repeat(8, 60px);
       grid-gap: 10px;
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      margin-top: 5px;
       font-weight: bold;
       color: #ccc;
     }
@@ -96,8 +106,33 @@
   </style>
 </head>
 <body>
-  <h1>Strum Pattern Generator (Randomized)</h1>
-  
+    <header style="text-align: center; padding: 10px 15px;">
+        <h1 style="margin-bottom: 5px; font-size: 24px;">Four Chord Song Generator</h1>
+        <div style="font-size: 14px; color: #ccc;">
+          <span>A project by <a href="https://tomvelle.com" target="_blank" style="color: #5BC0DE; text-decoration: none; font-weight: bold;">Tom Velle</a></span>
+        </div>
+        <button id="toggleInfo" style="margin-top: 10px; font-size: 14px; padding: 6px 12px;">ℹ️ Show Instructions</button>
+        <div id="infoBox" style="display: none; max-width: 700px; margin: 10px auto; font-size: 14px; color: #ccc; text-align: left; line-height: 1.5;">
+          <ul>
+            <li><strong>Grid:</strong> Click each box to cycle through <em>Down</em>, <em>Mute</em>, <em>Up</em>, or <em>Rest</em>.</li>
+            <li><strong>Chords:</strong> Select up to four chords, one per measure.</li>
+            <li><strong>BPM:</strong> Adjust the tempo to your preference.</li>
+            <li><strong>Randomize:</strong> Check “Randomize Pattern” or “Randomize Chords” and click “Randomize.”</li>
+            <li><strong>Play:</strong> Click “Play Pattern” to preview in your browser.</li>
+            <li><strong>Download:</strong> Save a MIDI file with “Generate MIDI (Download).”</li>
+            <li><strong>Share:</strong> Click “📤 Share” to copy a link to your custom pattern.</li>
+          </ul>
+        </div>
+      </header>
+      
+      <script>
+        document.getElementById("toggleInfo").addEventListener("click", function() {
+          let infoBox = document.getElementById("infoBox");
+          infoBox.style.display = (infoBox.style.display === "none") ? "block" : "none";
+          this.innerText = infoBox.style.display === "none" ? "ℹ️ Show Instructions" : "ℹ️ Hide Instructions";
+        });
+      </script>
+        
   <!-- Global Settings -->
   <div id="settings">
     <label>BPM: <input type="number" id="bpm" value="120" min="60" max="240"></label>
@@ -155,24 +190,32 @@
     <div id="grid">
       <!-- Cells inserted by JavaScript -->
     </div>
+    <div id="grid-labels">
+        <div>5</div>
+        <div>&amp;</div>
+        <div>6</div>
+        <div>&amp;</div>
+        <div>7</div>
+        <div>&amp;</div>
+        <div>8</div>
+        <div>&amp;</div>
+      </div>
+  
   </div>
 
   <!-- Randomization Controls -->
   <div style="text-align:center;">
     <label><input type="checkbox" id="randPattern" checked> Randomize Pattern</label>
     <label><input type="checkbox" id="randChords" checked> Randomize Chords</label>
-    <button id="randomBtn">Randomize</button>
+    <button id="randomBtn">Randomize</button><button id="shareBtn">📤 Share</button>
   </div>
 
   <div class="button-container">
     <button id="generate">Generate MIDI (Download)</button>
-    <button id="play">Play Pattern</button>
+    <button id="play">Play Pattern</button>    <label><input type="checkbox" id="loopCheckbox" >Loop</label>
   </div>
-  
-  <div id="loopContainer" style="text-align:center;">
-    <label><input type="checkbox" id="loopCheckbox" disabled> [coming soon] Loop Playback</label>
-  </div>
-  
+  <div id="shareBox" style="text-align:center; margin-top:10px; max-width:700px; word-wrap:break-word; font-size:14px; color:#ccc;"></div>
+
   <!-- Tools for saving file, playback logic, etc. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="https://unpkg.com/tone"></script>
@@ -383,47 +426,86 @@
       saveAs(blob, "raw_strum_pattern.mid");
     });
 
-    /*********************************************************
-     * 7) Tone.js Playback (unchanged from before)
-     *********************************************************/
-    let currentPart=null, loopDuration=0;
-    document.getElementById('play').addEventListener('click', function(){
-      let bpm=parseInt(document.getElementById("bpm").value);
-      if(currentPart){
+/*********************************************************
+ * 7) Tone.js Playback (Loop Now Only Affects Playback Without Restarting)
+ *********************************************************/
+ let currentPart = null, loopDuration = 0;
+let polySynth = new Tone.PolySynth(Tone.Synth, { maxPolyphony: 4 }).toDestination();
+
+document.getElementById('play').addEventListener('click', function () {
+    let bpm = parseInt(document.getElementById("bpm").value);
+    
+    // Stop existing playback before starting a new one
+    if (currentPart) {
         currentPart.dispose();
-        currentPart=null;
+        currentPart = null;
         Tone.Transport.stop();
         Tone.Transport.cancel();
-      }
-      let events=generateNoteEvents();
-      let toneEvents=[];
-      events.forEach(ev=>{
-        let startSec=(ev.tick/ticksPerBeat)*(60/bpm);
-        let durSec=(ev.length/ticksPerBeat)*(60/bpm);
+    }
+
+    let events = generateNoteEvents();
+    let toneEvents = [];
+
+    events.forEach(ev => {
+        let startSec = (ev.tick / ticksPerBeat) * (60 / bpm);
+        let durSec = (ev.length / ticksPerBeat) * (60 / bpm);
         toneEvents.push({
-          time:startSec,
-          note: midiNumberToName(ev.note),
-          duration: durSec,
-          velocity: ev.velocity/127
+            time: startSec,
+            note: midiNumberToName(ev.note),
+            duration: durSec,
+            velocity: ev.velocity / 127
         });
-      });
-      let polySynth=new Tone.PolySynth(Tone.Synth).toDestination();
-      Tone.Transport.bpm.value=bpm;
-      const loopBox=document.getElementById('loopCheckbox').checked;
-      if(loopBox){
-        Tone.Transport.loop=true;
-        loopDuration=(ticksPerMeasure/ticksPerBeat)*(60/bpm)*4;
-        Tone.Transport.loopStart=0;
-        Tone.Transport.loopEnd=loopDuration;
-      } else {
-        Tone.Transport.loop=false;
-      }
-      currentPart=new Tone.Part((time, evt)=>{
-        polySynth.triggerAttackRelease(evt.note, evt.duration, time, evt.velocity);
-      }, toneEvents);
-      currentPart.start(0);
-      Tone.start().then(()=>Tone.Transport.start());
     });
+
+    Tone.Transport.bpm.value = bpm;
+    loopDuration = (ticksPerMeasure / ticksPerBeat) * (60 / bpm) * 4;
+
+    // Check if looping is enabled
+    if (document.getElementById('loopCheckbox').checked) {
+        Tone.Transport.loop = true;
+        Tone.Transport.loopStart = 0;
+        Tone.Transport.loopEnd = loopDuration;
+    } else {
+        Tone.Transport.loop = false;
+    }
+
+    currentPart = new Tone.Part((time, evt) => {
+        polySynth.triggerAttackRelease(evt.note, evt.duration, time, evt.velocity);
+    }, toneEvents);
+
+    currentPart.start(0);
+
+    // Start transport only if Tone.js has been started
+    Tone.start().then(() => Tone.Transport.start());
+});
+
+/*********************************************************
+ * 8) Handle Loop Toggle Without Restarting Playback
+ *********************************************************/
+document.getElementById('loopCheckbox').addEventListener('change', function () {
+    if (Tone.Transport.state === "started") {
+        if (this.checked) {
+            // If loop is enabled, make sure it loops naturally at the end of playback
+            Tone.Transport.loop = true;
+            Tone.Transport.loopStart = 0;
+            Tone.Transport.loopEnd = loopDuration;
+        } else {
+            // If loop is disabled mid-playback, let it finish the current loop, then stop
+            let currentTime = Tone.Transport.seconds;
+            let timeIntoCycle = currentTime % loopDuration;
+            let timeRemaining = loopDuration - timeIntoCycle;
+
+            setTimeout(() => {
+                Tone.Transport.stop();
+                Tone.Transport.cancel();
+                if (currentPart) {
+                    currentPart.dispose();
+                    currentPart = null;
+                }
+            }, timeRemaining * 1000);
+        }
+    }
+});
 
     // Convert numeric MIDI note => string name, e.g. 60 => "C4"
     function midiNumberToName(num){
@@ -486,6 +568,46 @@
         }
       }
     });
+
+
+
+// Function to create a shareable URL
+function generateShareURL() {
+    let bpm = document.getElementById("bpm").value;
+    let chord1 = document.getElementById("chord1").value;
+    let chord2 = document.getElementById("chord2").value;
+    let chord3 = document.getElementById("chord3").value;
+    let chord4 = document.getElementById("chord4").value;
+    let patternString = pattern.join(","); // Use "-" for cleaner URLs
+
+    let baseURL = window.location.origin + window.location.pathname;
+    let shareURL = `${baseURL}?bpm=${bpm}&chords=${chord1},${chord2},${chord3},${chord4}&pattern=${patternString}`;
+
+    return shareURL;
+}
+
+// Function to display and copy the shareable URL
+function copyShareURL() {
+    let url = generateShareURL();
+    
+    // Display the URL in the shareBox div
+    let shareBox = document.getElementById("shareBox");
+    shareBox.innerHTML = `<p>📤 <strong>Shareable Link:</strong></p>
+                          <p><a href="${url}" target="_blank" id="shareLink">${url}</a></p>
+                          <p><small>(Click the link to copy)</small></p>`;
+    
+    // Auto-copy the URL to clipboard when clicking the link
+    document.getElementById("shareLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        navigator.clipboard.writeText(url).then(() => {
+            shareBox.innerHTML += `<p style="color: #5BC0DE;">✅ Link copied to clipboard!</p>`;
+        }).catch(err => console.error("Failed to copy: ", err));
+    });
+}
+
+// Hook up the Share button to the function
+document.getElementById("shareBtn").addEventListener("click", copyShareURL);
+
   </script>
 </body>
 </html>
