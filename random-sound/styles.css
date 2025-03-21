@@ -1,0 +1,102 @@
+/* Dark theme base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* Main container */
+  .container {
+    max-width: 1200px; /* A bit wider container */
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Title styling */
+  h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #ffffff;
+  }
+  
+  /* Button styling */
+  button {
+    background-color: #1e88e5;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #1565c0;
+  }
+  
+  /* Games container: strictly side by side (will wrap only on very narrow screens) */
+  .games {
+    display: flex;
+    justify-content: center; /* center the cards horizontally */
+    align-items: flex-start; /* align the top edges */
+    gap: 20px;
+    flex-wrap: wrap; /* allow wrap on extremely narrow screens */
+    margin: 0 auto;
+  }
+  
+  /* Game card styling: narrower width to avoid "big" look */
+  .game-card {
+    background-color: #1f1f1f;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    width: 320px; /* fixed width so they stay side by side on larger screens */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+    text-align: center; /* center content within the card */
+  }
+  
+  .game-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Image styling: limit size to avoid giant placeholders */
+  .game-card img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  /* Headings in game cards */
+  .game-card h2,
+  .game-card h3 {
+    margin: 10px 0;
+    color: #ffffff;
+  }
+  
+  /* Game info text */
+  .game-card p {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  
+  /* Soundtrack link styling */
+  a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
