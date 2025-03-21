@@ -171,17 +171,6 @@
     </script>
 
     <!-- Global Settings -->
-     <div id="instrumentSelector" style="text-align: center; margin: 10px auto;">
-  <label>Instrument:
-    <select id="instrument">
-      <option value="Synth" selected>Synth</option>
-      <option value="AMSynth">AMSynth</option>
-      <option value="FMSynth">FMSynth</option>
-      <option value="MonoSynth">MonoSynth</option>
-    </select>
-  </label>
-</div>
-
     <div id="settings">
         <label>BPM: <input type="number" id="bpm" value="120" min="60" max="240"></label>
     </div>
@@ -459,14 +448,25 @@
         /*********************************************************
          * 1) STROKE TYPES, CHORDS, AND PATTERN STATE
          *********************************************************/
-         const strokeTypes = ['rest', 'down', 'mute', 'up', '+'];
-const strokeProperties = {
-    'rest': { vel: 0, len: 0 },
-    'down': { vel: 100, len: 120 },
-    'mute': { vel: 40, len: 60 },
-    'up': { vel: 60, len: 120 },
-    '+': { vel: null, len: null }  // This will extend the previous note
-};
+        const strokeTypes = ['rest', 'down', 'mute', 'up'];
+        const strokeProperties = {
+            'rest': {
+                vel: 0,
+                len: 0
+            },
+            'down': {
+                vel: 100,
+                len: 120
+            },
+            'mute': {
+                vel: 40,
+                len: 60
+            },
+            'up': {
+                vel: 60,
+                len: 120
+            }
+        };
         const chordShapes = {
     "C": [48, 52, 55], "C#": [49, 53, 56], "D": [50, 54, 57], "D#": [51, 55, 58], "E": [52, 56, 59],
     "F": [53, 57, 60], "F#": [54, 58, 61], "G": [55, 59, 62], "G#": [56, 60, 63], "A": [57, 61, 64],
@@ -540,66 +540,57 @@ const strokeProperties = {
             updateCell(cell, pattern[i]);
             cell.addEventListener('click', () => {
                 let idx = parseInt(cell.dataset.index);
-    let cur = pattern[idx];
-    let next = strokeTypes[(strokeTypes.indexOf(cur) + 1) % strokeTypes.length];
-    pattern[idx] = next;
-    updateCell(cell, next);
+                let cur = pattern[idx];
+                let next = strokeTypes[(strokeTypes.indexOf(cur) + 1) % strokeTypes.length];
+                pattern[idx] = next;
+                updateCell(cell, next);
             });
             gridContainer.appendChild(cell);
         }
 
         function updateCell(cell, type) {
-    cell.className = 'cell';
-    cell.classList.add(type);
-    cell.innerText = (type === 'rest') ? '' : (type === '+' ? '➕' : type[0].toUpperCase());
-}
+            cell.className = 'cell';
+            cell.classList.add(type);
+            cell.innerText = (type === 'rest') ? '' : type[0].toUpperCase();
+        }
 
         /*********************************************************
          * 5) GENERATE CHORD NOTE EVENTS => {note, tick, length, velocity}
          *********************************************************/
-         function generateNoteEvents() {
-    let noteEvents = [];
-    let lastEvents = []; // Store last chord event for potential extension
+        function generateNoteEvents() {
+            let noteEvents = [];
+            for (let measureIndex = 0; measureIndex < 4; measureIndex++) {
+                const chordEl = document.getElementById('chord' + (measureIndex + 1));
+                let chordName = chordEl ? chordEl.value : '';
+                // if chordName is empty or chordShapes[chordName] doesn't exist, fallback or skip
+                let chordNotes = chordShapes[chordName] || [];
+                if (!Array.isArray(chordNotes) || chordNotes.length === 0) {
+                    // If truly empty, skip this measure or fallback to a default chord
+                    // e.g. fallback to "D" or do nothing
+                    // chordNotes = chordShapes["D"];
+                    continue;
+                }
 
-    for (let measureIndex = 0; measureIndex < 4; measureIndex++) {
-        const chordEl = document.getElementById('chord' + (measureIndex + 1));
-        let chordName = chordEl ? chordEl.value : '';
-        let chordNotes = chordShapes[chordName] || [];
-        if (!Array.isArray(chordNotes) || chordNotes.length === 0) continue;
-
-        let measureStart = measureIndex * ticksPerMeasure;
-        for (let sub = 0; sub < 16; sub++) {
-            let stroke = pattern[sub];
-
-            if (stroke === '+') {
-                // Extend every note in the last chord event
-                lastEvents.forEach(event => event.length += subdivisionTicks);
-                continue;
+                let measureStart = measureIndex * ticksPerMeasure;
+                for (let sub = 0; sub < 16; sub++) {
+                    let stroke = pattern[sub];
+                    if (stroke !== 'rest') {
+                        let props = strokeProperties[stroke];
+                        let startTick = measureStart + sub * subdivisionTicks;
+                        chordNotes.forEach(n => {
+                            noteEvents.push({
+                                note: n,
+                                tick: startTick,
+                                length: props.len,
+                                velocity: props.vel
+                            });
+                        });
+                    }
+                }
             }
-
-            if (stroke !== 'rest') {
-                let props = strokeProperties[stroke];
-                let startTick = measureStart + sub * subdivisionTicks;
-                lastEvents = []; // Reset previous notes
-
-                chordNotes.forEach(n => {
-                    let event = {
-                        note: n,
-                        tick: startTick,
-                        length: props.len,
-                        velocity: props.vel
-                    };
-                    noteEvents.push(event);
-                    lastEvents.push(event); // Store last chord event
-                });
-            }
+            noteEvents.sort((a, b) => a.tick - b.tick);
+            return noteEvents;
         }
-    }
-
-    noteEvents.sort((a, b) => a.tick - b.tick);
-    return noteEvents;
-}
-
         /*********************************************************
          * 6) RAW MIDI WRITING: Build Type-0 track from noteEvents
          *********************************************************/
@@ -699,25 +690,7 @@ const strokeProperties = {
             let blob = new Blob([fullBytes], {
                 type: 'audio/midi'
             });
-
-                // **Generate filename based on chords and pattern**
-    let chordProgression = [
-        document.getElementById('chord1').value,
-        document.getElementById('chord2').value,
-        document.getElementById('chord3').value,
-        document.getElementById('chord4').value
-    ].join('_'); // Join chords with underscores
-
-    let patternShort = pattern.map(s => {
-        return s === 'down' ? 'D' :
-               s === 'mute' ? 'M' :
-               s === 'up' ? 'U' :
-               s === 'extend' ? '+' : 'X'; // Use "X" for rests
-    }).join('');
-
-    let filename = `${chordProgression}_${patternShort}.mid`;
- 
-            saveAs(blob, filename);
+            saveAs(blob, "raw_strum_pattern.mid");
         });
 
         /*********************************************************
@@ -726,7 +699,7 @@ const strokeProperties = {
         let currentPart = null,
             loopDuration = 0;
         let polySynth = new Tone.PolySynth(Tone.Synth, {
-            maxPolyphony: 32
+            maxPolyphony: 4
         }).toDestination();
 
         document.getElementById('play').addEventListener('click', function() {
@@ -739,12 +712,6 @@ const strokeProperties = {
                 Tone.Transport.stop();
                 Tone.Transport.cancel();
             }
-// Get the selected instrument from the dropdown
-let instrumentChoice = document.getElementById("instrument").value;
-// Use Tone[instrumentChoice] to get the constructor
-let SynthConstructor = Tone[instrumentChoice];
-// Create a new PolySynth using the selected instrument type
-let polySynth = new Tone.PolySynth(SynthConstructor, { maxPolyphony: 32 }).toDestination();
 
             let events = generateNoteEvents();
             let toneEvents = [];
@@ -876,21 +843,18 @@ let polySynth = new Tone.PolySynth(SynthConstructor, { maxPolyphony: 32 }).toDes
 
         // Function to create a shareable URL
         function generateShareURL() {
-    let bpm = document.getElementById("bpm").value;
-    // Encode each chord so that symbols like "#" become %23
-    let chord1 = encodeURIComponent(document.getElementById("chord1").value);
-    let chord2 = encodeURIComponent(document.getElementById("chord2").value);
-    let chord3 = encodeURIComponent(document.getElementById("chord3").value);
-    let chord4 = encodeURIComponent(document.getElementById("chord4").value);
-    // Also encode the pattern values and join with commas
-    let patternString = pattern.map(p => encodeURIComponent(p)).join(",");
-    
-    let baseURL = window.location.origin + window.location.pathname;
-    let shareURL = `${baseURL}?bpm=${bpm}&chords=${chord1},${chord2},${chord3},${chord4}&pattern=${patternString}`;
-    
-    return shareURL;
-}
+            let bpm = document.getElementById("bpm").value;
+            let chord1 = document.getElementById("chord1").value;
+            let chord2 = document.getElementById("chord2").value;
+            let chord3 = document.getElementById("chord3").value;
+            let chord4 = document.getElementById("chord4").value;
+            let patternString = pattern.join(","); // Use "-" for cleaner URLs
 
+            let baseURL = window.location.origin + window.location.pathname;
+            let shareURL = `${baseURL}?bpm=${bpm}&chords=${chord1},${chord2},${chord3},${chord4}&pattern=${patternString}`;
+
+            return shareURL;
+        }
 
         // Function to display and copy the shareable URL
         function copyShareURL() {
